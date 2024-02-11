@@ -105,7 +105,7 @@ foreach ($rsdetalles as $rsdetalle) {
     $pdf->Cell(15, 1, $rsdetalle['cta_nro'], 0, 0, 'C');
     $pdf->Cell(/*1*/51+85, /*2*/1, /*3*/$rsdetalle['concepto'], /*4*/0, /*5*/0, /*6*/'L', /*7*/null, /*8*/null, /*9*/1, /*10*/null, /*11*/null, /*12*/null);
 
-    $pdf->Cell(25, 1, number_format($rsdetalle['detc_monto'],0,',','.'), 0, 1, 'R');
+    $pdf->Cell(25, 1, $rsdetalle['detc_monto'], 0, 1, 'R');
     $totgral += $rsdetalle['detc_monto'];
 }
 $posicion = $pdf->GetY();

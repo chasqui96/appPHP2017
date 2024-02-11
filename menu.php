@@ -3,10 +3,11 @@
     <head>
         <meta charset="utf-8">
         <title>Menú Principal</title>
-		<link rel="shortcut icon" href="/favicon2.ico">
-        <link rel="stylesheet" type="text/css" href="./css/reset.css">
-        <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="./css/menuresponsive.css">
+		
+        <!-- <link rel="stylesheet" type="text/css" href="./css/reset.css"> -->
+        <link rel="stylesheet" type="text/css" href="./src/bootstrap-5.3.2/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="./src/bootstrap-5.3.2/css/bootstrap-reboot.min.css">
+        <!-- <link rel="stylesheet" type="text/css" href="./css/menuresponsive.css"> -->
         <style>
             body {
                 background: #2aabd2; /* fallback for old browsers */
@@ -21,19 +22,20 @@
         </style>
     </head>
     <body>
-        <header class="container">		
+    		
             <?php
             require_once './clases/conexion.php';
             require_once './cabecera.php';
             ?>		
-        </header>
+       
         <section class="container">
             
         </section>
-
-        <script type="text/javascript" src="./js/jquery-1.12.2.min.js"></script>
-        <script type="text/javascript" src="./js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="./js/menuresponsive.js"></script>
+      
+        <script type="text/javascript" src="./src/js/jquery-3.7.1.min.js"></script>
+        <script type="text/javascript" src="./src/bootstrap-5.3.2/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="./src/bootstrap-5.3.2/js/bootstrap.bundle.min.js"></script>
+        <!-- <script type="text/javascript" src="./js/menuresponsive.js"></script> -->
 
     </body>
 </html>

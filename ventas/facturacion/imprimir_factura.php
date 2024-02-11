@@ -244,6 +244,7 @@ $pdf->SetFont('Times', '', 10);
 $pdf->Text(55, 259, 'Son Gs. '.ucfirst(strtolower ($rsventas[0]['total_letra'])));
 // Close and output PDF document
 // This method has several options, check the source code documentation for more information.
+ob_end_clean(); // Clean any content of the output buffer
 $pdf->Output($rsventas[0]['ven_nrofactura_f'] . '.pdf', 'I');
 
 //============================================================+

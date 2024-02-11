@@ -175,7 +175,7 @@ if($rstars){
 
 
 
-
+ob_end_clean(); // Clean any content of the output buffer
 // Close and output PDF document
 // This method has several options, check the source code documentation for more information.
 $pdf->Output('ARQUEO DE CAJA.pdf', 'I');

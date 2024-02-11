@@ -1,3 +1,28 @@
+$(document).ready(function () {
+    $("#jqGrid").jqGrid({
+        url: 'listado_grid.php',
+        datatype: "json",
+        colModel: [
+            { label: 'ID', name: 'id_cobros', width: 75, key: true },
+            { label: 'CLIENTE', name: 'Cliente', width: 200 },
+            { label: 'NUMERO DOCUMENTO', name: 'ruc', width: 100 },
+            { label: 'FECHA', name: 'cob_fecha_f', width: 100 },
+            { label: 'MONTO', name: 'cob_efectivo', width: 100 },
+        ],
+        styleUI: "Bootstrap5",
+        viewrecords: true,
+        width: 800,
+        height: 200,
+        rowNum: 10,
+        pager: "#jqGridPager",
+        onSelectRow: function (rowid, status, e) {
+           seleccion(rowid);
+            // Aquí puedes realizar acciones adicionales cuando se selecciona una fila
+        }
+    });
+});
+
+
 function agregar() {
     //HABILITAR
     $("#btnGrabar").removeAttr("disabled");
@@ -70,7 +95,9 @@ function calcularTotales() {
     $("#grilladetalle tbody tr").each(function (fila) {
         $(this).children("td").each(function (col) {
             if (col === 4) {
-                total += parseInt($(this).text().replace(/\./g, ''));
+                //console.log();
+                total += parseFloat($("#saldo").val());
+                //total += parseFloat($(this).text().replace(/\./g, ''));
             }
         });
     });
@@ -80,13 +107,14 @@ function calcularTotales() {
     } else {
         $("#idclientes").attr("disabled", "true").trigger("chosen:updated");
     }
+    
 
     var totales = "";
 
     totales += "<tr>";
-    totales += "<th class=\"danger\" colspan=\"3\"><h4>TOTAL GENERAL</h4></th>";
-    totales += "<th class=\"danger\" style=\"text-align: right;\"><h4>" + total.toLocaleString() + "</h4></th>";
-    totales += "<th class=\"default\"><h4></h4></th>";
+    totales += "<th class=\"danger\" colspan=\"3\"><h6>TOTAL GENERAL</h6></th>";
+    totales += "<th class=\"danger\" style=\"text-align: right;\"><h6>" + total.toLocaleString() + "</h6></th>";
+    totales += "<th class=\"default\"><h6></h6></th>";
     totales += "</tr>";
     $("#totalcobrar").val(total);
     $("#grilladetalle tfoot").html(totales);
@@ -149,38 +177,38 @@ function get_detalles(filtro) {
             });
 }
 function seleccion(fila) {
-    fila.find("td").each(function (index) {
+    // fila.find("td").each(function (index) {
 
-        switch (index) {
-            case 0:
-                $("#codigo").val($(this).text());
-                break;
+    //     switch (index) {
+    //         case 0:
+    //             $("#codigo").val($(this).text());
+    //             break;
 
-            case 1:
-                $("#txtnro").val($(this).text());
-                break;
+    //         case 1:
+    //             $("#txtnro").val($(this).text());
+    //             break;
 
            
 
-            case 5:
-                $("#cboidclientes").val(parseInt($(this).text())).trigger("chosen:updated");
-                break;
+    //         case 5:
+    //             $("#cboidclientes").val(parseInt($(this).text())).trigger("chosen:updated");
+    //             break;
 
-            case 6:
-                $("#efectivo").val($(this).text());
-                break;
+    //         case 6:
+    //             $("#efectivo").val($(this).text());
+    //             break;
                 
-            case 7:
-                $("#idaper").val($(this).text());
-                break;
+    //         case 7:
+    //             $("#idaper").val($(this).text());
+    //             break;
                 
-            case 8:
-                $("#fecha").val($(this).text());
-                break;
-        }
-        $("#panelBuscador").modal('hide');
-    });
-    get_detalles($("#codigo").val());
+    //         case 8:
+    //             $("#fecha").val($(this).text());
+    //             break;
+    //     }
+    //     $("#panelBuscador").modal('hide');
+    // });
+    get_detalles(fila);
 }
 
 
@@ -579,7 +607,7 @@ function agregar_cuentas() {
         });
 
         if (!repetido) {
-            $('#grilladetalle > tbody:last').append('<tr class="ultimo"><td hidden>' + cuentas[0] + '</td><td style="text-align: center;">' + cuentas[1] + '</td><td style="text-align: center;">' + cuentas[3] + '</td><td style="text-align: center;">' + cuentas[4] + '</td><td style="text-align: right;">' + sal.toLocaleString() + '</td><td style="text-align: right;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button></td></tr>');
+            $('#grilladetalle > tbody:last').append('<tr class="ultimo"><td hidden>' + cuentas[0] + '</td><td style="text-align: center;">' + cuentas[1] + '</td><td style="text-align: center;">' + cuentas[3] + '</td><td style="text-align: center;">' + cuentas[4] + '</td><td style="text-align: right;">' + sal.toLocaleString() + '</td><td style="text-align: right;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-xs"><i class="bi bi-dash-circle"></i>x</button></td></tr>');
             contador++;
         } else {
             bootbox.alert("ESTA CUENTA YA FUE SELECCIONADA");

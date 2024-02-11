@@ -8,7 +8,7 @@
 
         <!-- CSS de Bootstrap -->
         <link rel="stylesheet" type="text/css" href="../../css/reset.css">
-        <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../src/css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" type="text/css" href="../../css/menuresponsive.css" media="screen">
         <link rel="stylesheet" type="text/css" href="../../css/chosenselect.css" media="screen">
         <!-- librerías opcionales que activan el soporte de HTML5 para IE8 -->
@@ -172,8 +172,8 @@
                             </div>
                         </div>
                         <input type="hidden" id="operacion"/>
-                        <input type="hidden" id="idcaja" value="<?php echo $_SESSION['idcaja']; ?>"/>
-                        <input type="hidden" id="idusuario" value="<?php echo $_SESSION['id_usuario']; ?>"/>
+                        <input type="hidden" id="idcaja" value="<?php echo $_SESSION['idcaja']; ?>" />
+                        <input type="hidden" id="idusuario" value="<?php echo $_SESSION['id_usuario']; ?>" />
                     </form>
                 </div>
             </div>
@@ -191,7 +191,7 @@
         <!-- Todos los plugins JavaScript de Bootstrap (también puedes
              incluir archivos JavaScript individuales de los únicos
              plugins que utilices) -->
-        <script src="../../js/bootstrap.min.js"></script>
+        <script src="../../src/js/bootstrap.min.js"></script>
         <script src="../../js/menuresponsive.js"></script>
         <script src="../../js/chosenselect.js"></script>
         <script src="metodosjs.js"></script>

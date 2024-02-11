@@ -14,7 +14,7 @@ and open the template in the editor.
     <head>
         <meta charset="UTF-8">
         <title>ACCESO</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="./src/bootstrap-5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
 		<link rel="shortcut icon" href="/favicon2.ico">
         <style>
 
@@ -131,9 +131,10 @@ and open the template in the editor.
                 <button onclick="consultar();">Ingresar</button>
             </div>
         </div>
-        <script src="js/jquery-1.12.2.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/bootbox.min.js"></script>
+        <script src="./src/js/jquery-3.7.1.min.js"></script>
+        <script src="./src/bootstrap-5.3.2/js/bootstrap.min.js"></script>
+        <script src="./src/bootbox/bootbox.all.min.js"></script>
+        <script src="./src/bootbox/bootbox.locales.min.js"></script>
         <script>
 
                     $('#clave').keypress(function (evt) {
@@ -147,6 +148,7 @@ and open the template in the editor.
                         $.post("login.php", {usuario: $("#usuario").val(), clave: $("#clave").val()})
                                 .done(function (data) {
                                     if (data === "OK") {
+                                       // document.location.href = "menu.php";
                                         bootbox.alert({
                                             message: "BIENVENIDO AL SISTEMA",
                                             callback: function () {

@@ -99,7 +99,7 @@ function comprobaraper() {
     $.post("../caja_abierta.php")
             .done(function (data) {
                 if (data === "0") {
-                    //bootbox.alert(data);
+                    bootbox.alert("<strong> NO HAY CAJA ABIERTA!</strong>");
                     $('#btnAbrir').removeAttr('disabled');
                 } else {
                     bootbox.alert(data);

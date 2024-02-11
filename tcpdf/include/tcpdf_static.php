@@ -55,7 +55,7 @@ class TCPDF_STATIC {
 	 * Current TCPDF version.
 	 * @private static
 	 */
-	private static $tcpdf_version = '6.2.26';
+	private static $tcpdf_version = '6.3.2';
 
 	/**
 	 * String alias for total number of pages.
@@ -1926,10 +1926,10 @@ class TCPDF_STATIC {
 		$alt = array_unique($alt);
 		foreach ($alt as $path) {
 			if (!self::file_exists($path)) {
-				return false;
+				continue;
 			}
 			$ret = @file_get_contents($path);
-			if ($ret !== false) {
+			if ( $ret != false ) {
 			    return $ret;
 			}
 			// try to use CURL for URLs
@@ -2112,7 +2112,7 @@ class TCPDF_STATIC {
 		'A3'                     => array(  841.890,  1190.551), // = (  297 x 420  ) mm  = ( 11.69 x 16.54 ) in
 		'A4'                     => array(  595.276,   841.890), // = (  210 x 297  ) mm  = (  8.27 x 11.69 ) in
 		'A5'                     => array(  419.528,   595.276), // = (  148 x 210  ) mm  = (  5.83 x 8.27  ) in
-		'A6'                     => array(  297.638,  841.890), // = (  105 x 297  ) mm  = (  4.13 x 11.69  ) in
+		'A6'                     => array(  297.638,   419.528), // = (  105 x 148  ) mm  = (  4.13 x 5.83  ) in
 		'A7'                     => array(  209.764,   297.638), // = (   74 x 105  ) mm  = (  2.91 x 4.13  ) in
 		'A8'                     => array(  147.402,   209.764), // = (   52 x 74   ) mm  = (  2.05 x 2.91  ) in
 		'A9'                     => array(  104.882,   147.402), // = (   37 x 52   ) mm  = (  1.46 x 2.05  ) in
