@@ -303,7 +303,7 @@ if (!$resultim) {
                                                     <label for="importech" class="control-label">Importe</label>
                                                 </div>
                                                 <div class="col-sm-3">
-                                                    <input type="number" class="form-control" name="importech" id="importech">
+                                                    <input type="text" class="form-control formatoGuarani" name="importech" id="importech">
                                                 </div>
 
                                             </div>

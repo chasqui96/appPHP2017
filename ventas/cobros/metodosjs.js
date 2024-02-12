@@ -128,30 +128,43 @@ function calcularTotales() {
     $("#totalcobrar").autoNumeric("set",total);
     $("#grilladetalle tfoot").html(totales);
 }
+$("#efectivo").keyup(function(event) {
+    if (event.keyCode === 8) {
+        calcularVuelto();
+        console.log("Se ha presionado la tecla Backspace");
+    }
+});
 function calcularVuelto() {
     var acobrar = parseFloat($("#totalcobrar").autoNumeric('get'));
     var efe = parseFloat($("#efectivo").autoNumeric('get'));
     var totalch = parseFloat($("#totalcheques").autoNumeric('get'));
     var totaltar = parseFloat($("#totaltarjetas").autoNumeric('get'));
-    var totalcobrado = efe + totalch + totaltar;
-
-    $("#lbmontoefe").html(efe.toLocaleString());
-    $("#lbtotalcobrado").html(totalcobrado.toLocaleString());
-
-    var vuelto = acobrar - totalcobrado;
+    var totalcobrado = parseFloat(efe + totalch + totaltar);
 
 
+    var vuelto = parseFloat( acobrar - totalcobrado);
+    
+    console.log(vuelto);
+    
+    if(totalcobrado === acobrar){
+        $("#vuelto").autoNumeric("set", 0);
+        $("#lbvuelto").html("SIN VUELTO");
+        $("#lbtotalcobrado").html(totalcobrado.toLocaleString());
+        console.log("entra1")
+    }
+   else if (vuelto <= 0) {
+    $("#vuelto").autoNumeric("set", vuelto * -1);
+    // $("#vuelto").val(vuelto);
+    $("#lbvuelto").html("Vuelto");
 
-    if (vuelto <= 0 || vuelto == NaN) {
-        
-
-        $("#vuelto").autoNumeric("set", vuelto * -1);
-        $("#lbvuelto").html("Vuelto");
     } else {
         $("#vuelto").autoNumeric("set", vuelto);
-        // $("#vuelto").val(vuelto);
         $("#lbvuelto").html("Faltan");
+        $("#lbtotalcobrado").html((vuelto).toLocaleString());
+     
+        
     }
+    
 
 }
 function get_datos(filtro) {
@@ -318,7 +331,7 @@ function ubicarCheque() {
     var emi = $('#emision').val();
     var venc = $('#vence').val();
 
-    var impor = parseInt($('#importech').val());
+    var impor = parseInt($('#importech').autoNumeric("get"));
 
 
     var repetido = false;
@@ -344,7 +357,7 @@ function ubicarCheque() {
         });
 
         if (!repetido) {
-            $('#grillacheques > tbody:last').append('<tr class="ultimo"><td hidden>' + ent + '</td><td style="text-align: left;">' + entdesc + '</td><td style="text-align: center;">' + num + '</td><td style="text-align: left;">' + titu + '</td><td style="text-align: center;">' + emi + '</td><td style="text-align: center;">' + venc + '</td><td style="text-align: center;">' + impor.toLocaleString() + '</td><td style="text-align: center;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-sm">x</button></td></tr>');
+            $('#grillacheques > tbody:last').append('<tr class="ultimo"><td hidden>' + ent + '</td><td style="text-align: left;">' + entdesc + '</td><td style="text-align: center;">' + num + '</td><td style="text-align: left;">' + titu + '</td><td style="text-align: center;">' + emi + '</td><td style="text-align: center;">' + venc + '</td><td style="text-align: center;">' + impor + '</td><td style="text-align: center;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-sm">x</button></td></tr>');
             contador++;
         } else {
             bootbox.alert("ESTE CHEQUE YA FUE SELECCIONADO");
@@ -362,7 +375,7 @@ function calcularTotalCheque() {
     $("#grillacheques tbody tr").each(function (fila) {
         $(this).children("td").each(function (col) {
             if (col === 6) {
-                total += parseInt($(this).text().replace(/\./g, ''));
+                total += parseFloat($(this).text());
             }
         });
     });
@@ -373,7 +386,7 @@ function calcularTotalCheque() {
     totales += "<th class=\"danger\" style=\"text-align: center;\"><h5>" + total.toLocaleString() + "</h5></th>";
     totales += "<th class=\"default\"><h5></h5></th>";
     totales += "</tr>";
-    $("#totalcheques").val(total);
+    $("#totalcheques").autoNumeric("set",total);
     $("#lbmontocheque").html(total.toLocaleString());
     $("#grillacheques tfoot").html(totales);
 }
@@ -598,7 +611,7 @@ function agregar_cuentas() {
     var cov = 0;
     var coc = 0;
     var contador = 0;
-    if (parseInt(cuentas[2]) < sal) {
+    if (parseFloat(cuentas[2]) < sal) {
         bootbox.alert('EL MONTO INGRESADO SUPERA EL SALDO DE LA CUENTA');
     } else {
         $("#grilladetalle tbody tr").each(function (index) {
