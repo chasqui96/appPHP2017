@@ -235,13 +235,13 @@ if (!$resultim) {
 
                     <div class="card m-3">
 
-                        <div class="card-header"><strong>Formas de Cobros</strong> <span class="badge bg-secondary" id="lbtotalcobrado">0</span> </div>
+                        <div class="card-header"><strong>Formas de Cobros</strong></div>
                         <div class="card-body">
                             <div class="d-flex align-items-start">
                                 <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                                     <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">COBRO EFECTIVO</button>
-                                    <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">COBRO CON CHEQUE</button>
-                                    <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">COBRO CON TARJETA</button>
+                                    <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">COBRO  CHEQUE</button>
+                                    <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">COBRO TARJETA</button>
 
                                 </div>
                                 <div class="tab-content" id="v-pills-tabContent">
@@ -307,7 +307,7 @@ if (!$resultim) {
                                                 </div>
 
                                             </div>
-                                            <table class="table" id="grillacheques">
+                                            <table class="table table-primary table-sm table-bordered table-striped" id="grillacheques">
                                                 <thead>
                                                     <tr>
                                                         <th style="text-align: center;" hidden="">idEntidad</th>
@@ -381,13 +381,13 @@ if (!$resultim) {
                                                 <label for="importetar" class="control-label">Importe</label>
                                             </div>
                                             <div class="col-sm-3">
-                                                <input type="number" class="form-control" name="importetar" id="importetar">
+                                                <input type="text" class="form-control formatoGuarani" name="importetar" id="importetar">
                                             </div>
 
 
                                         </div>
 
-                                        <table class="table" id="grillatarjetas">
+                                        <table class="table table-primary table-sm table-bordered table-striped" id="grillatarjetas">
                                             <thead>
                                                 <tr>
                                                     <th style="text-align: center;" hidden="">idTarj</th>
@@ -616,6 +616,18 @@ if (!$resultim) {
                                 <label for="inputEmail4" class="form-label" id="lbvuelto">Faltan</label>
                                 <input type="text" class="form-control formatoGuarani" id="vuelto" disabled>
                             </div>
+                            <div class="col-md-3">
+                                <label for="inputEmail4" class="form-label" id="lbvuelto">Efectivo</label>
+                                <input type="text" class="form-control formatoGuarani" id="montoEfectivo" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="inputEmail4" class="form-label" id="lbvuelto">Tarjeta</label>
+                                <input type="text" class="form-control formatoGuarani" id="montoTarjeta" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="inputEmail4" class="form-label" id="lbvuelto">Cheque</label>
+                                <input type="text" class="form-control formatoGuarani" id="montoCheque" disabled>
+                            </div>
 
                         </div>
                     </div>
@@ -639,18 +651,21 @@ if (!$resultim) {
     </div>
 
 
-    <div class="modal fade " id="panelBuscador" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="top: 5%;">
+    <div class="modal fade " id="panelBuscador" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">BUSCADOR COBRO</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="bodyBuscador">
-                    <div class="d-flex p-2">
-                        <table id="jqGrid"></table>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                        <table id="gridCobros"></table>
                         <div id="jqGridPager"></div>
+                        </div>
+                        
 
                     </div>
                     <!-- <div class="section">
@@ -746,7 +761,7 @@ if (!$resultim) {
     <script src="../../src/bootstrap-5.3.2/js/bootstrap.min.js"></script>
     <script src="../../src/jqgrid/js/jquery.jqgrid.min.js"></script>
     <script src="../../src/jqgrid/js/jquery.sortable.js"></script>
-    <script src="../../src/jqgrid/js/i18n/grid.locale-es.js"></script>
+    <script src="../../src/jqgrid/js/i18n/grid.locale-en.js"></script>
     
 
     <script src="../../js/chosenselect.js"></script>

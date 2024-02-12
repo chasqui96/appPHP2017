@@ -7,7 +7,7 @@ function inicializarFormatoNumerico() {
 
 }
 $(document).ready(function () {
-    $("#jqGrid").jqGrid({
+    $("#gridCobros").jqGrid({
         url: 'listado_grid.php',
         datatype: "json",
         colModel: [
@@ -17,10 +17,10 @@ $(document).ready(function () {
             { label: 'FECHA', name: 'cob_fecha_f', width: 100 },
             { label: 'MONTO', name: 'cob_efectivo', width: 100 },
         ],
-        styleUI: "Bootstrap5",
+        styleUI: "Bootstrap",
         viewrecords: true,
         width: 800,
-        height: 200,
+        height: 500,
         rowNum: 10,
         pager: "#jqGridPager",
         onSelectRow: function (rowid, status, e) {
@@ -67,7 +67,7 @@ function grabar() {
     generarArrayCheques();
     generarArrayTarjetas();
 
-    var sql = "select sp_cobros("+ $('#codigo').val() +","+ $('#efectivo').val() +","+ $('#idaper').val() +",'"+ $('#detallecobro').val() +"','"+ $('#detallecheque').val() +"','"+ $('#detalletarjeta').val() +"',"+ $('#operacion').val() +")";
+    var sql = "select sp_cobros("+ $('#codigo').val() +","+ $('#efectivo').autoNumeric("get") +","+ $('#idaper').val() +",'"+ $('#detallecobro').val() +"','"+ $('#detallecheque').val() +"','"+$('#detalletarjeta').val() +"',"+ $('#operacion').val() +")";
     //bootbox.alert(sql);
 
     if ($("#codigo").val() === "0" && $("#operacion").val() === "2") {
@@ -75,7 +75,7 @@ function grabar() {
     } else if ($('#detallecobro').val() === "{}") {
         bootbox.alert("DEBE AL MENOS AGREGAR UNA CUOTA");
     } else {
-        bootbox.confirm("¿DESEA GRABAR LA OPERACION?", function (e) {
+        bootbox.confirm("¿DESEA GRABAR LA OPERACION? " +sql+" aca", function (e) {
             if (e) {
                 $.post("../../clases/operaciones_bd.php", {sql: sql})
                         .done(function (data) {
@@ -130,8 +130,9 @@ function calcularTotales() {
 }
 $("#efectivo").keyup(function(event) {
     if (event.keyCode === 8) {
+        $("#efectivo").autoNumeric('set',0);
         calcularVuelto();
-        console.log("Se ha presionado la tecla Backspace");
+     
     }
 });
 function calcularVuelto() {
@@ -141,6 +142,9 @@ function calcularVuelto() {
     var totaltar = parseFloat($("#totaltarjetas").autoNumeric('get'));
     var totalcobrado = parseFloat(efe + totalch + totaltar);
 
+    $("#montoEfectivo").autoNumeric("set",efe);
+    $("#montoTarjeta").autoNumeric("set",totaltar);
+    $("#montoCheque").autoNumeric("set",totalch);
 
     var vuelto = parseFloat( acobrar - totalcobrado);
     
@@ -331,7 +335,7 @@ function ubicarCheque() {
     var emi = $('#emision').val();
     var venc = $('#vence').val();
 
-    var impor = parseInt($('#importech').autoNumeric("get"));
+    var impor = parseFloat($('#importech').autoNumeric("get"));
 
 
     var repetido = false;
@@ -357,7 +361,7 @@ function ubicarCheque() {
         });
 
         if (!repetido) {
-            $('#grillacheques > tbody:last').append('<tr class="ultimo"><td hidden>' + ent + '</td><td style="text-align: left;">' + entdesc + '</td><td style="text-align: center;">' + num + '</td><td style="text-align: left;">' + titu + '</td><td style="text-align: center;">' + emi + '</td><td style="text-align: center;">' + venc + '</td><td style="text-align: center;">' + impor + '</td><td style="text-align: center;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-sm">x</button></td></tr>');
+            $('#grillacheques > tbody:last').append('<tr class="ultimo"><td hidden>' + ent + '</td><td style="text-align: left;">' + entdesc + '</td><td style="text-align: center;">' + num + '</td><td style="text-align: left;">' + titu + '</td><td style="text-align: center;">' + emi + '</td><td style="text-align: center;">' + venc + '</td><td style="text-align: center;">' + impor.toLocaleString() + '</td><td style="text-align: center;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-sm">x</button></td></tr>');
             contador++;
         } else {
             bootbox.alert("ESTE CHEQUE YA FUE SELECCIONADO");
@@ -375,7 +379,7 @@ function calcularTotalCheque() {
     $("#grillacheques tbody tr").each(function (fila) {
         $(this).children("td").each(function (col) {
             if (col === 6) {
-                total += parseFloat($(this).text());
+                total += parseFloat($(this).text().replace(",",""));
             }
         });
     });
@@ -400,7 +404,7 @@ function ubicarTarjeta() {
     var num = $('#numerotar').val();
     var caut = $('#caut').val();
 
-    var impor = parseInt($('#importetar').val());
+    var impor = parseFloat($('#importetar').autoNumeric("get"));
 
 
     var repetido = false;
@@ -449,7 +453,7 @@ function calcularTotalTarjeta() {
     $("#grillatarjetas tbody tr").each(function (fila) {
         $(this).children("td").each(function (col) {
             if (col === 6) {
-                total += parseInt($(this).text().replace(/\./g, ''));
+                total += parseFloat($(this).text().replace(",",""));
             }
         });
     });
@@ -477,9 +481,9 @@ function generarArrayCtas() {
         $(this).children("td").each(function (index2) {
 
             if (index2 < 4) {
-                salidacta = salidacta + $(this).text().split(".").join("") + ",";
+                salidacta = salidacta + $(this).text().split(".").join("").split(",").join("").replace("x","") + ",";
             } else {
-                salidacta = salidacta + $(this).text().split(".").join("");
+                salidacta = salidacta + $(this).text().split(".").join("").split(",").join("").replace("x","") ;
             }
 
 
@@ -500,62 +504,97 @@ function generarArrayCtas() {
 
 
 function generarArrayCheques() {
-    var salidacta = '{';
-    $("#grillacheques tbody tr").each(function (index) {
+    // var salidacta = '{';
+    // $("#grillacheques tbody tr").each(function (index) {
 
 
-        salidacta = salidacta + '{';
+    //     salidacta = salidacta + '{';
 
-        $(this).children("td").each(function (index2) {
+    //     $(this).children("td").each(function (index2) {
 
-            if (index2 < 6) {
-                salidacta = salidacta + $(this).text().split(".").join("") + ",";
-            } else {
-                salidacta = salidacta + $(this).text().split(".").join("");
-            }
+    //         if (index2 < 6) {
+    //             salidacta = salidacta + $(this).text().split(".").join("") + ",";
+    //         } else {
+    //             salidacta = salidacta + $(this).text().split(".").join("");
+    //         }
 
 
 
+    //     });
+    //     if (index < $("#grillacheques tbody tr").length - 1) {
+    //         salidacta = salidacta + '},';
+    //     } else {
+    //         salidacta = salidacta + '}';
+    //     }
+    // });
+    // salidacta = salidacta + '}';
+    // $('#detallecheque').val(salidacta);
+    var cheques = []; // Array para almacenar los cheques
+    
+    $("#grillacheques tbody tr").each(function () {
+        var cheque = {}; // Objeto para almacenar la información de cada cheque
+
+        // Itera sobre cada celda de la fila actual
+        $(this).children("td").each(function (index) {
+            var value = $(this).text().split(".").join("").split(",").join(""); // Elimina puntos del texto
+            cheque["campo" + (index + 1)] = value; // Almacena el valor en una propiedad del objeto cheque
         });
-        if (index < $("#grillacheques tbody tr").length - 1) {
-            salidacta = salidacta + '},';
-        } else {
-            salidacta = salidacta + '}';
-        }
+
+        cheques.push(cheque); // Agrega el objeto cheque al array de cheques
     });
-    salidacta = salidacta + '}';
-    $('#detallecheque').val(salidacta);
+    
+    var jsonCheques = JSON.stringify(cheques); // Serializa el array de cheques a JSON
+
+    $('#detallecheque').val(jsonCheques); // Establece el valor del campo oculto con el JSON resultante
+    //alert(jsonCheques); // Opcional: muestra el JSON resultante en una alerta
     //alert(salidacta);
 }
 
 
 
 function generarArrayTarjetas() {
-    var salidacta = '{';
-    $("#grillatarjetas tbody tr").each(function (index) {
+    // var salidacta = '{';
+    // $("#grillatarjetas tbody tr").each(function (index) {
 
 
-        salidacta = salidacta + '{';
+    //     salidacta = salidacta + '{';
 
-        $(this).children("td").each(function (index2) {
+    //     $(this).children("td").each(function (index2) {
 
-            if (index2 < 6) {
-                salidacta = salidacta + $(this).text().split(".").join("") + ",";
-            } else {
-                salidacta = salidacta + $(this).text().split(".").join("");
-            }
+    //         if (index2 < 6) {
+    //             salidacta = salidacta + $(this).text().split(".").join("") + ",";
+    //         } else {
+    //             salidacta = salidacta + $(this).text().split(".").join("");
+    //         }
 
 
 
+    //     });
+    //     if (index < $("#grillatarjetas tbody tr").length - 1) {
+    //         salidacta = salidacta + '},';
+    //     } else {
+    //         salidacta = salidacta + '}';
+    //     }
+    // });
+    // salidacta = salidacta + '}';
+    // $('#detalletarjeta').val(salidacta);
+    var tarjetas = []; // Array para almacenar los cheques
+    
+    $("#grillatarjetas tbody tr").each(function () {
+        var tarjeta = {}; // Objeto para almacenar la información de cada cheque
+
+        // Itera sobre cada celda de la fila actual
+        $(this).children("td").each(function (index) {
+            var value = $(this).text().split(".").join("").split(",").join(""); // Elimina puntos y coma del texto
+            tarjeta["campo" + (index + 1)] = value; // Almacena el valor en una propiedad del objeto cheque
         });
-        if (index < $("#grillatarjetas tbody tr").length - 1) {
-            salidacta = salidacta + '},';
-        } else {
-            salidacta = salidacta + '}';
-        }
+
+        tarjetas.push(tarjeta); // Agrega el objeto cheque al array de cheques
     });
-    salidacta = salidacta + '}';
-    $('#detalletarjeta').val(salidacta);
+    
+    var jsontarjeta = JSON.stringify(tarjetas); // Serializa el array de cheques a JSON
+
+    $('#detalletarjeta').val(jsontarjeta);
     //alert(salidacta);
 }
 
