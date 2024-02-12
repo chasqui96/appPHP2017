@@ -24,7 +24,7 @@ foreach ($result as $r) {
         echo "<td class=\"text-right\">";
         echo number_format($r['detc_monto'],0,",",".");
         echo "</td>";
-        echo "<td class=\"text-right\" onclick=\"eliminarfila($(this).parent())\"><button type=\"button\" class=\"btn btn-danger btn-xs\"><span class=\"glyphicon glyphicon-remove\"></span></button></td>";
+        echo "<td class=\"text-right\" onclick=\"eliminarfila($(this).parent())\"><button type=\"button\" class=\"btn btn-danger  btn-sm\">x</button></td>";
     echo "</tr>";
 }
 //echo $sql;

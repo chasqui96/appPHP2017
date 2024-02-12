@@ -31,17 +31,17 @@ if (!$resultim) {
     <title>Cobros</title>
 
     <!-- CSS de Bootstrap -->
-       <link rel="stylesheet" type="text/css" href="../../src/bootstrap-5.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../src/bootstrap-5.3.2/css/bootstrap.min.css">
 
-        <!-- <link rel="stylesheet" type="text/css" href="../../src/jqgrid/css/ui.jqgrid-bootstrap5.css"> -->
-        <link rel="stylesheet" type="text/css" href="../../src/jqgrid/css/ui.jqgrid-bootstrap-ui.css">
-        <link rel="stylesheet" type="text/css" href="../../src/jqgrid/css/ui.jqgrid-bootstrap5.css"> 
-        <link rel="stylesheet" type="text/css" href="../../src/jqgrid/plugins/css/ui.multiselect.min.css">
-       
-        
-       <link rel="stylesheet" type="text/css" href="../../src/css/chosenselect.css">
-       
-      
+    <!-- <link rel="stylesheet" type="text/css" href="../../src/jqgrid/css/ui.jqgrid-bootstrap5.css"> -->
+    <link rel="stylesheet" type="text/css" href="../../src/jqgrid/css/ui.jqgrid-bootstrap-ui.css">
+    <link rel="stylesheet" type="text/css" href="../../src/jqgrid/css/ui.jqgrid-bootstrap5.css">
+    <link rel="stylesheet" type="text/css" href="../../src/jqgrid/plugins/css/ui.multiselect.min.css">
+
+
+    <link rel="stylesheet" type="text/css" href="../../src/css/chosenselect.css">
+
+
     <style>
         body {
             background: #2aabd2;
@@ -150,9 +150,9 @@ if (!$resultim) {
                     <input type="hidden" class="form-control" id="detallecheque" id="detallecheque">
                     <input type="hidden" class="form-control" id="detalletarjeta" id="detalletarjeta">
                     <input type="hidden" class="form-control" id="codigo" value="0"> <!-- Se calcula en el sp_ventas -->
-                    <input type="hidden" class="form-control" id="totalcobrar" id="totalcobrar" value="0"> <!-- Se calcula en el sp_ventas -->
-                    <input type="hidden" class="form-control" id="totalcheques" id="totalcheques" value="0"> <!-- Se calcula en el sp_ventas -->
-                    <input type="hidden" class="form-control" id="totaltarjetas" id="totaltarjetas" value="0"> <!-- Se calcula en el sp_ventas -->
+                    <input type="hidden" class="form-control formatoGuarani" id="totalcobrar" id="totalcobrar" value="0"> <!-- Se calcula en el sp_ventas -->
+                    <input type="hidden" class="form-control formatoGuarani" id="totalcheques" id="totalcheques" value="0"> <!-- Se calcula en el sp_ventas -->
+                    <input type="hidden" class="form-control formatoGuarani" id="totaltarjetas" id="totaltarjetas" value="0"> <!-- Se calcula en el sp_ventas -->
 
                     <div class="card m-3">
 
@@ -191,7 +191,7 @@ if (!$resultim) {
                                     <label for="saldo" class="control-label">Saldo</label>
                                 </div>
                                 <div class="col-sm-2">
-                                    <input type="number" class="form-control" name="saldo" id="saldo">
+                                    <input type="text" class="form-control formatoGuarani" name="saldo" id="saldo">
                                 </div>
 
                             </div>
@@ -235,7 +235,7 @@ if (!$resultim) {
 
                     <div class="card m-3">
 
-                        <div class="card-header"><strong>Formas de Cobros</strong> <span class="label label-primary right-block" id="lbtotalcobrado" style="padding-left: 5px; padding-right: 5px; font-size: large;">0</span></div>
+                        <div class="card-header"><strong>Formas de Cobros</strong> <span class="badge bg-secondary" id="lbtotalcobrado">0</span> </div>
                         <div class="card-body">
                             <div class="d-flex align-items-start">
                                 <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -250,7 +250,7 @@ if (!$resultim) {
                                         <div class="row align-items-start">
                                             <div class="col">
                                                 <label for="efectivo" class="control-label">Efectivo</label>
-                                                <input type="number" class="form-control" name="efectivo" id="efectivo" value="0" onkeyup="calcularVuelto();">
+                                                <input type="text" class="form-control formatoGuarani" name="efectivo" id="efectivo" value="0" onkeyup="calcularVuelto();">
                                             </div>
                                         </div>
 
@@ -607,11 +607,20 @@ if (!$resultim) {
 
                             </div> -->
                         </div>
+                        <div class="card-footer text-muted">
+                            <!-- <p class="label label-primary center-block" id="lbvuelto"><strong>Faltan</strong></p>
+                            <p class="label label-danger center-block" id="vuelto"><strong>0</strong></p> -->
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-3">
+                                <label for="inputEmail4" class="form-label" id="lbvuelto">Faltan</label>
+                                <input type="text" class="form-control formatoGuarani" id="vuelto" disabled>
+                            </div>
 
-
+                        </div>
                     </div>
 
-
+                    <!-- 
                     <div id='imagenFlotante' style="text-align: right;">
                         <div class="panel panel-danger" style="padding-top: 10px; font-size: x-large; background-color: #A9D0F5;">
 
@@ -619,7 +628,7 @@ if (!$resultim) {
                             <p class="label label-danger center-block" id="vuelto"><strong>0</strong></p>
 
                         </div>
-                    </div>
+                    </div> -->
 
 
 
@@ -639,10 +648,10 @@ if (!$resultim) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="bodyBuscador">
-                    <div class="d-flex p-2" >
+                    <div class="d-flex p-2">
                         <table id="jqGrid"></table>
                         <div id="jqGridPager"></div>
-                        
+
                     </div>
                     <!-- <div class="section">
                         <div class="container" >
@@ -733,15 +742,15 @@ if (!$resultim) {
     </div> -->
     <!-- Librería jQuery requerida por los plugins de JavaScript -->
     <script src="../../src/js/jquery-3.7.1.min.js"></script>
+    <script src="../../src/js/autoNumeric.js"></script>
     <script src="../../src/bootstrap-5.3.2/js/bootstrap.min.js"></script>
     <script src="../../src/jqgrid/js/jquery.jqgrid.min.js"></script>
     <script src="../../src/jqgrid/js/jquery.sortable.js"></script>
     <script src="../../src/jqgrid/js/i18n/grid.locale-es.js"></script>
+    
 
     <script src="../../js/chosenselect.js"></script>
     <script src="../../js/bootbox.min.js"></script>
-
-
     <script src="metodosjs.js"></script>
 
 </body>

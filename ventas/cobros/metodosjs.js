@@ -1,3 +1,11 @@
+var opcionesDolar = { aSep: '.', aDec: ',', aSign: '$', vMin: '-999999999.9999', mDec: '4', mRound: 'A', wEmpty: 'zero', lZero: 'deny' };
+var opcionesGuarani = { aSep: '.', aDec: ',', vMin: '-999999999', mDec: '0', mRound: 'A', wEmpty: 'empty', lZero: 'deny' };
+function inicializarFormatoNumerico() {
+
+    $(".formatoGuarani").autoNumeric('init', opcionesGuarani);
+    $(".formatoDolar").autoNumeric('init', opcionesDolar);
+
+}
 $(document).ready(function () {
     $("#jqGrid").jqGrid({
         url: 'listado_grid.php',
@@ -20,6 +28,7 @@ $(document).ready(function () {
             // Aquí puedes realizar acciones adicionales cuando se selecciona una fila
         }
     });
+    inicializarFormatoNumerico();
 });
 
 
@@ -96,7 +105,7 @@ function calcularTotales() {
         $(this).children("td").each(function (col) {
             if (col === 4) {
                 //console.log();
-                total += parseFloat($("#saldo").val());
+                total += parseFloat($("#saldo").autoNumeric("get"));
                 //total += parseFloat($(this).text().replace(/\./g, ''));
             }
         });
@@ -113,17 +122,17 @@ function calcularTotales() {
 
     totales += "<tr>";
     totales += "<th class=\"danger\" colspan=\"3\"><h6>TOTAL GENERAL</h6></th>";
-    totales += "<th class=\"danger\" style=\"text-align: right;\"><h6>" + total.toLocaleString() + "</h6></th>";
+    totales += "<th class=\"danger\" style=\"text-align: center;\"><h6>" + total.toLocaleString() + "</h6></th>";
     totales += "<th class=\"default\"><h6></h6></th>";
     totales += "</tr>";
-    $("#totalcobrar").val(total);
+    $("#totalcobrar").autoNumeric("set",total);
     $("#grilladetalle tfoot").html(totales);
 }
 function calcularVuelto() {
-    var acobrar = parseInt($("#totalcobrar").val());
-    var efe = parseInt($("#efectivo").val());
-    var totalch = parseInt($("#totalcheques").val());
-    var totaltar = parseInt($("#totaltarjetas").val());
+    var acobrar = parseFloat($("#totalcobrar").autoNumeric('get'));
+    var efe = parseFloat($("#efectivo").autoNumeric('get'));
+    var totalch = parseFloat($("#totalcheques").autoNumeric('get'));
+    var totaltar = parseFloat($("#totaltarjetas").autoNumeric('get'));
     var totalcobrado = efe + totalch + totaltar;
 
     $("#lbmontoefe").html(efe.toLocaleString());
@@ -133,13 +142,14 @@ function calcularVuelto() {
 
 
 
-    if (vuelto <= 0) {
-        $("#vuelto").attr("class", "label label-success center-block");
-        $("#vuelto").html((vuelto * -1).toLocaleString());
+    if (vuelto <= 0 || vuelto == NaN) {
+        
+
+        $("#vuelto").autoNumeric("set", vuelto * -1);
         $("#lbvuelto").html("Vuelto");
     } else {
-        $("#vuelto").attr("class", "label label-danger center-block");
-        $("#vuelto").html((vuelto).toLocaleString());
+        $("#vuelto").autoNumeric("set", vuelto);
+        // $("#vuelto").val(vuelto);
         $("#lbvuelto").html("Faltan");
     }
 
@@ -290,7 +300,7 @@ function agregar_fila() {
         });
 
         if (!repetido) {
-            $('#grilladetalle > tbody:last').append('<tr><td style="text-align: center;">' + producto[0] + '</td><td>' + productodesc + '</td><td style="text-align: center;">' + cant.toLocaleString() + '</td><td style="text-align: right;">' + prec.toLocaleString() + '</td><td style="text-align: right;">' + exenta.toLocaleString() + '</td><td style="text-align: right;">' + grav5.toLocaleString() + '</td><td style="text-align: right;">' + grav10.toLocaleString() + '</td><td style="text-align: right;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button></td></tr>');
+            $('#grilladetalle > tbody:last').append('<tr><td style="text-align: center;">' + producto[0] + '</td><td>' + productodesc + '</td><td style="text-align: center;">' + cant.toLocaleString() + '</td><td style="text-align: center;">' + prec.toLocaleString() + '</td><td style="text-align: center;">' + exenta.toLocaleString() + '</td><td style="text-align: center;">' + grav5.toLocaleString() + '</td><td style="text-align: center;">' + grav10.toLocaleString() + '</td><td style="text-align: center;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-sm ">x</button></td></tr>');
             contador++;
         }
         calcularTotales();
@@ -334,7 +344,7 @@ function ubicarCheque() {
         });
 
         if (!repetido) {
-            $('#grillacheques > tbody:last').append('<tr class="ultimo"><td hidden>' + ent + '</td><td style="text-align: left;">' + entdesc + '</td><td style="text-align: center;">' + num + '</td><td style="text-align: left;">' + titu + '</td><td style="text-align: center;">' + emi + '</td><td style="text-align: center;">' + venc + '</td><td style="text-align: right;">' + impor.toLocaleString() + '</td><td style="text-align: right;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button></td></tr>');
+            $('#grillacheques > tbody:last').append('<tr class="ultimo"><td hidden>' + ent + '</td><td style="text-align: left;">' + entdesc + '</td><td style="text-align: center;">' + num + '</td><td style="text-align: left;">' + titu + '</td><td style="text-align: center;">' + emi + '</td><td style="text-align: center;">' + venc + '</td><td style="text-align: center;">' + impor.toLocaleString() + '</td><td style="text-align: center;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-sm">x</button></td></tr>');
             contador++;
         } else {
             bootbox.alert("ESTE CHEQUE YA FUE SELECCIONADO");
@@ -360,7 +370,7 @@ function calcularTotalCheque() {
 
     totales += "<tr>";
     totales += "<th class=\"danger\" colspan=\"5\"><h5>TOTAL CHEQUE</h5></th>";
-    totales += "<th class=\"danger\" style=\"text-align: right;\"><h5>" + total.toLocaleString() + "</h5></th>";
+    totales += "<th class=\"danger\" style=\"text-align: center;\"><h5>" + total.toLocaleString() + "</h5></th>";
     totales += "<th class=\"default\"><h5></h5></th>";
     totales += "</tr>";
     $("#totalcheques").val(total);
@@ -407,7 +417,7 @@ function ubicarTarjeta() {
         });
 
         if (!repetido) {
-            $('#grillatarjetas > tbody:last').append('<tr class="ultimo"><td hidden>' + tar + '</td><td style="text-align: left;">' + tardesc + '</td><td style="text-align: center;" hidden>' + ent + '</td><td style="text-align: left;">' + entdesc + '</td><td style="text-align: center;">' + num + '</td><td style="text-align: center;">' + caut + '</td><td style="text-align: right;">' + impor.toLocaleString() + '</td><td style="text-align: right;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button></td></tr>');
+            $('#grillatarjetas > tbody:last').append('<tr class="ultimo"><td hidden>' + tar + '</td><td style="text-align: left;">' + tardesc + '</td><td style="text-align: center;" hidden>' + ent + '</td><td style="text-align: left;">' + entdesc + '</td><td style="text-align: center;">' + num + '</td><td style="text-align: center;">' + caut + '</td><td style="text-align: center;">' + impor.toLocaleString() + '</td><td style="text-align: center;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-sm">x</button></td></tr>');
             contador++;
         } else {
             alert("ESTA TARJETA YA FUE SELECCIONADA");
@@ -434,7 +444,7 @@ function calcularTotalTarjeta() {
 
     totales += "<tr>";
     totales += "<th class=\"danger\" colspan=\"4\"><h5>TOTAL TARJETA</h5></th>";
-    totales += "<th class=\"danger\" style=\"text-align: right;\"><h5>" + total.toLocaleString() + "</h5></th>";
+    totales += "<th class=\"danger\" style=\"text-align: center;\"><h5>" + total.toLocaleString() + "</h5></th>";
     totales += "<th class=\"default\"><h5></h5></th>";
     totales += "</tr>";
     $("#totaltarjetas").val(total);
@@ -540,7 +550,7 @@ function generarArrayTarjetas() {
 function cuentaselect() {
     var id = $('#cuentas').val();
     var dat = id.split("~");
-    $('#saldo').val(dat[2]);
+    $('#saldo').autoNumeric("set",dat[2]);
     $('#saldo').select();
 }
 
@@ -581,7 +591,7 @@ function agregar_cuentas() {
 
     var cta = $('#cuentas').val();
     var cuentas = cta.split('~');
-    var sal = parseInt($('#saldo').val());
+    var sal = parseFloat($('#saldo').autoNumeric("get"));
 
 
     var repetido = false;
@@ -607,7 +617,7 @@ function agregar_cuentas() {
         });
 
         if (!repetido) {
-            $('#grilladetalle > tbody:last').append('<tr class="ultimo"><td hidden>' + cuentas[0] + '</td><td style="text-align: center;">' + cuentas[1] + '</td><td style="text-align: center;">' + cuentas[3] + '</td><td style="text-align: center;">' + cuentas[4] + '</td><td style="text-align: right;">' + sal.toLocaleString() + '</td><td style="text-align: right;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-xs"><i class="bi bi-dash-circle"></i>x</button></td></tr>');
+            $('#grilladetalle > tbody:last').append('<tr class="ultimo"><td hidden>' + cuentas[0] + '</td><td style="text-align: center;">' + cuentas[1] + '</td><td style="text-align: center;">' + cuentas[3] + '</td><td style="text-align: center;">' + cuentas[4] + '</td><td style="text-align: center;">' + sal.toLocaleString() + '</td><td style="text-align: center;" onclick="eliminarfila($(this).parent())"><button type="button" class="btn btn-danger btn-sm">x</button></td></tr>');
             contador++;
         } else {
             bootbox.alert("ESTA CUENTA YA FUE SELECCIONADA");
