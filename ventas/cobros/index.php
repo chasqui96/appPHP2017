@@ -34,10 +34,11 @@ if (!$resultim) {
     <link rel="stylesheet" type="text/css" href="../../src/bootstrap-5.3.2/css/bootstrap.min.css">
 
     <!-- <link rel="stylesheet" type="text/css" href="../../src/jqgrid/css/ui.jqgrid-bootstrap5.css"> -->
-    <link rel="stylesheet" type="text/css" href="../../src/jqgrid/css/ui.jqgrid-bootstrap-ui.css">
-    <link rel="stylesheet" type="text/css" href="../../src/jqgrid/css/ui.jqgrid-bootstrap5.css">
-    <link rel="stylesheet" type="text/css" href="../../src/jqgrid/plugins/css/ui.multiselect.min.css">
 
+    <link rel="stylesheet" type="text/css" href="../../src/jqgrid/css/ui.jqgrid-bootstrap5.css">
+    <link rel="stylesheet" type="text/css" href="../../src/jqgrid/css/addons/ui.multiselect.css">
+
+    <link rel="stylesheet" type="text/css" href="../../src/css/icon.css">
 
     <link rel="stylesheet" type="text/css" href="../../src/css/chosenselect.css">
 
@@ -115,8 +116,14 @@ if (!$resultim) {
 
 
     <div class="container" style="padding-top: 30px;">
-
-
+    
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="../../menu.php">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Gestionar Ventas</li>
+                <li class="breadcrumb-item active" aria-current="page">Cobros</li>
+            </ol>
+        </nav>
         <div class="row">
             <div class="col-md-12">
                 <form class="form-horizontal" id="formulario" role="form" action="grabar.php" method="post">
@@ -661,7 +668,7 @@ if (!$resultim) {
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-12" style="margin-left: 5%;">
                         <table id="gridCobros"></table>
                         <div id="jqGridPager"></div>
                         </div>
@@ -761,11 +768,11 @@ if (!$resultim) {
     <script src="../../src/bootstrap-5.3.2/js/bootstrap.min.js"></script>
     <script src="../../src/jqgrid/js/jquery.jqgrid.min.js"></script>
     <script src="../../src/jqgrid/js/jquery.sortable.js"></script>
-    <script src="../../src/jqgrid/js/i18n/grid.locale-en.js"></script>
+    <script src="../../src/jqgrid/js/i18n/grid.locale-es.js"></script>
     
 
     <script src="../../js/chosenselect.js"></script>
-    <script src="../../js/bootbox.min.js"></script>
+    <script src="../../src/bootbox/bootbox.all.js"></script>
     <script src="metodosjs.js"></script>
 
 </body>

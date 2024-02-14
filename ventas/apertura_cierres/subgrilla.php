@@ -1,10 +1,11 @@
 <?php
 require_once '../../clases/conexion.php';
-$page = $_GET['page'];
-$row = $_GET['row'];
-$sord = $_GET['sord'];
-$sql = "SELECT * FROM v_cobros ORDER BY id_cobros ".$sord.";";
-$result = consultas::get_datos($sql);
+
+// Parámetros de búsqueda enviados por jqGrid
+$id_apercierre = isset($_GET['rowId']) ? $_GET['rowId'] : '';
+
+$sql = "SELECT * FROM v_aperturas WHERE id_apercierre = " . $id_apercierre . " ORDER BY 1 DESC;";
+$result = consultas::get_datos($sql);   
 
 if ($result) {
     $data = array(); // Inicializa un array para almacenar los resultados
@@ -12,13 +13,12 @@ if ($result) {
     // Itera sobre los resultados y agrégalos al array
     foreach ($result as $row) {
         $data[] = array(
-            "id" => $row['id_cobros'], // Se agrega un campo "id" para identificar de manera única cada fila
+            "id" => $row['id_apercierre'], // Se agrega un campo "id" para identificar de manera única cada fila
             "cell" => array(
-                $row['id'], // Recibo
-                $row['cliente'],   // Cliente
-                $row['ruc'],       // Ruc
-                $row['cob_fecha_f'], // Fecha
-                $row['cob_efectivo'] // Monto
+                $row['id_apercierre'],
+                number_format($row['monto_efectivo'], 0, ',', '.'),
+                number_format($row['monto_cheque'], 0, ',', '.'),
+                number_format($row['monto_tarjeta'], 0, ',', '.')
                 // Agrega más campos aquí según sea necesario
             )
         );
@@ -26,8 +26,8 @@ if ($result) {
 
     // Construir el objeto de respuesta completo
     $response = array(
-        "page" => $page, // Número de página actual (puedes cambiarlo si implementas la paginación)
-        "total" =>count($data), // Número total de páginas (puedes cambiarlo si implementas la paginación)
+        "page" => 1, // Número de página actual (puedes cambiarlo si implementas la paginación)
+        "total" => 1, // Número total de páginas (puedes cambiarlo si implementas la paginación)
         "records" => count($data), // Número total de registros
         "rows" => $data // Array de filas de datos
     );

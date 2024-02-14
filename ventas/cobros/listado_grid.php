@@ -1,8 +1,20 @@
 <?php
 require_once '../../clases/conexion.php';
 
-$sql = "SELECT * FROM v_cobros ORDER BY id_cobros DESC;";
+$page = $_GET['page'];
+$fila= $_GET['rows'];
+$sord = $_GET['sord'];
+$sql = "SELECT * FROM v_cobros ";
+$sqlCount = "SELECT count(*) FROM v_cobros";
+
+$sql .= " ORDER BY 1 ".$sord; 
+$offset = ($page - 1) * $fila;
+
+// Modifica la consulta SQL para incluir la limitación de resultados
+$sql .= " LIMIT $fila OFFSET $offset";
 $result = consultas::get_datos($sql);
+$resultCount = consultas::get_datos($sqlCount);
+
 
 if ($result) {
     $data = array(); // Inicializa un array para almacenar los resultados
@@ -16,20 +28,20 @@ if ($result) {
                 $row['cliente'],   // Cliente
                 $row['ruc'],       // Ruc
                 $row['cob_fecha_f'], // Fecha
-                $row['cob_efectivo'] // Monto
+                number_format($row['cob_efectivo'] , 0, ',', '.')// Monto
                 // Agrega más campos aquí según sea necesario
             )
         );
     }
 
+    $totalPages = ceil($resultCount[0]["count"] / (int)$fila);
     // Construir el objeto de respuesta completo
     $response = array(
-        "page" => 1, // Número de página actual (puedes cambiarlo si implementas la paginación)
-        "total" => 1, // Número total de páginas (puedes cambiarlo si implementas la paginación)
-        "records" => count($data), // Número total de registros
+        "page" => $page, // Número de página actual (puedes cambiarlo si implementas la paginación)
+        "total" =>$totalPages, // Número total de páginas (puedes cambiarlo si implementas la paginación)
+        "records" => $resultCount[0]["count"], // Número total de registros
         "rows" => $data // Array de filas de datos
     );
-
     // Convertir el array a formato JSON y devolver los datos
     echo json_encode($response);
 } else {

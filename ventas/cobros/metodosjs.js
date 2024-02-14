@@ -11,7 +11,8 @@ $(document).ready(function () {
         url: 'listado_grid.php',
         datatype: "json",
         colModel: [
-            { label: 'ID', name: 'id_cobros', width: 75, key: true },
+            
+            { label: '#', name: 'id_cobros', width: 75,formatter: formatearEnlaceId },
             { label: 'CLIENTE', name: 'Cliente', width: 200 },
             { label: 'NUMERO DOCUMENTO', name: 'ruc', width: 100 },
             { label: 'FECHA', name: 'cob_fecha_f', width: 100 },
@@ -19,11 +20,15 @@ $(document).ready(function () {
         ],
         styleUI: "Bootstrap",
         viewrecords: true,
-        width: 800,
-        height: 500,
+        width: 1000,
+        height: 200,
         rowNum: 10,
+        sortname:"id_cobros",
+        sortorder:'desc',
         pager: "#jqGridPager",
         onSelectRow: function (rowid, status, e) {
+            var rowData = $("#gridCobros").getRowData(rowid);
+            console.log(rowData);
            seleccion(rowid);
             // Aquí puedes realizar acciones adicionales cuando se selecciona una fila
         }
@@ -31,7 +36,11 @@ $(document).ready(function () {
     inicializarFormatoNumerico();
 });
 
+function formatearEnlaceId(cellvalue, options, rowObject) {
 
+    var enlace = '<a style="color:blue; target="_blank" href="imprimir_recibo.php?valor='+cellvalue+'">'+cellvalue+'</a>';
+    return enlace;
+}
 function agregar() {
     //HABILITAR
     $("#btnGrabar").removeAttr("disabled");
