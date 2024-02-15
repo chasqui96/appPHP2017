@@ -9,7 +9,7 @@ $result = consultas::get_datos($sql);
 foreach ($result as $r) {
     
     echo "<tr>";
-        echo "<td class=\"hidden\">";
+        echo "<td class=\"hidden\" style=\"display:none\">";
         echo $r['id_venta'];
         echo "</td>";
         echo "<td class=\"text-center\">";

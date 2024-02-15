@@ -12,13 +12,16 @@ $(document).ready(function () {
         datatype: "json",
         colModel: [
             
-            { label: '#', name: 'id_cobros', width: 75,formatter: formatearEnlaceId },
+            { label: '#', name: 'id_cobros', width: 75,formatter: formatearEnlaceId,key:true },
             { label: 'CLIENTE', name: 'Cliente', width: 200 },
             { label: 'NUMERO DOCUMENTO', name: 'ruc', width: 100 },
             { label: 'FECHA', name: 'cob_fecha_f', width: 100 },
             { label: 'MONTO', name: 'cob_efectivo', width: 100 },
+            { name: 'id_cliente', hidden: true },
+            { name: 'id_apercierre', hidden: true },
+            { name: 'fechanormal', hidden: true }
         ],
-        styleUI: "Bootstrap",
+        styleUI: "Bootstrap5",
         viewrecords: true,
         width: 1000,
         height: 200,
@@ -29,7 +32,7 @@ $(document).ready(function () {
         onSelectRow: function (rowid, status, e) {
             var rowData = $("#gridCobros").getRowData(rowid);
             console.log(rowData);
-           seleccion(rowid);
+           seleccion(rowData,rowid);
             // Aquí puedes realizar acciones adicionales cuando se selecciona una fila
         }
     });
@@ -38,7 +41,7 @@ $(document).ready(function () {
 
 function formatearEnlaceId(cellvalue, options, rowObject) {
 
-    var enlace = '<a style="color:blue; target="_blank" href="imprimir_recibo.php?valor='+cellvalue+'">'+cellvalue+'</a>';
+    var enlace = '<a style="color:blue;" target="_blank" href="imprimir_recibo.php?valor='+cellvalue+'">'+cellvalue+'</a>';
     return enlace;
 }
 function agregar() {
@@ -54,7 +57,19 @@ function agregar() {
     //VALOR DE LA OPERACION
     $("#operacion").val("1");
 }
+function cobrar() {
+    //HABILITAR
 
+    $("#btnGrabar").removeAttr("disabled");
+    $("#btnCancelar").removeAttr("disabled");
+
+    //DESHABILITAR
+    $("#btnCobrar").attr("disabled", "true");
+    $("#btnAnular").attr("disabled", "true");
+    $("#btnSalir").attr("disabled", "true");
+    //VALOR DE LA OPERACION
+    $("#operacion").val("3");
+}
 
 
 function anular() {
@@ -212,7 +227,14 @@ function get_detalles(filtro) {
                 calcularVuelto();
             });
 }
-function seleccion(fila) {
+function seleccion(fila,id_cobro) {
+    console.log(id_cobro);
+    $("#codigo").val(id_cobro);
+    $("#cboidclientes").val(fila.id_cliente).trigger("chosen:updated");
+    $("#efectivo").val(fila.cob_efectivo);
+    $("#idaper").val(fila.id_apercierre);
+    $("#fecha").val(fila.fechanormal);
+    $("#txtnro").val(22);
     // fila.find("td").each(function (index) {
 
     //     switch (index) {
@@ -242,9 +264,10 @@ function seleccion(fila) {
     //             $("#fecha").val($(this).text());
     //             break;
     //     }
-    //     $("#panelBuscador").modal('hide');
+    //     
     // });
-    get_detalles(fila);
+    $("#panelBuscador").modal('hide');
+    get_detalles(id_cobro);
 }
 
 

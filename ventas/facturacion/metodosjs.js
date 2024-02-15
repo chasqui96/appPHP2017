@@ -1,3 +1,239 @@
+var opcionesDolar = { aSep: '.', aDec: ',', aSign: '$', vMin: '-999999999.9999', mDec: '4', mRound: 'A', wEmpty: 'zero', lZero: 'deny' };
+var opcionesGuarani = { aSep: '.', aDec: ',', vMin: '-999999999', mDec: '0', mRound: 'A', wEmpty: 'empty', lZero: 'deny' };
+function inicializarFormatoNumerico() {
+
+    $(".formatoGuarani").autoNumeric('init', opcionesGuarani);
+    $(".formatoDolar").autoNumeric('init', opcionesDolar);
+
+}
+
+$(document).ready(function () {
+
+
+    var selectedRowId; // Variable para almacenar el rowId seleccionado
+    var cellvalueJs;
+    cargarTablaDetalle();
+   
+    
+    
+    
+
+    $("#productosGrid").jqGrid({
+        url: 'items_grid.php', // URL para obtener los productos (cambia por la URL correcta)
+        datatype: 'json',
+        editurl: 'clientArray',
+        colModel: [
+        
+            { label: 'Código', name: 'id', width: 100 },
+            { label: 'Descripción', name: 'mer_descripcion', width: 250 },
+            { label: 'Cantidad', name: 'cantidad', width: 80, editable: true },
+            { label: 'Precio', name: 'mer_precio', width: 200 },
+            { label: 'T.Impuesto', name: 'mer_tipoimpuesto', width: 200 },
+            { label: 'Stock', name: 'stock', width: 70,
+              formatter: function (cellvalue) {
+                  // Aplicar color rojo o verde según el stock
+                  return '<span style="color:' + (cellvalue < 5 ? 'red' : 'green') + '">' + cellvalue + '</span>';
+              }
+            }
+        ],
+        styleUI: "Bootstrap5",
+        viewrecords: true,
+        width: 800,
+        height: 300,
+        rowNum: 10,
+        multiselect: true, // Habilitar la selección múltiple
+        pager: "#productosPager",
+        onSelectRow: function(rowId) {
+            //var rowData = $("#productosGrid").jqGrid('getRowData', rowId);
+            $("#productosGrid").jqGrid("editRow", rowId, { keys: true });
+            // Agregar el producto seleccionado a la tabla de detalle
+           
+       
+        },
+ 
+    });
+ 
+    $("#agregarDetalleBtn").on("click", function() {
+        var numberOfRows = $("#productosGrid").jqGrid("getGridParam", "records");
+
+        // Iterar sobre todas las filas y restaurar la edición
+        for (var i = 1; i <= numberOfRows; i++) {
+            $("#productosGrid").jqGrid("saveRow", i);
+        }
+        var selectedIds = $("#productosGrid").jqGrid('getGridParam', 'selarrrow');
+        console.log(selectedIds);
+        if (selectedIds.length > 0) {
+            // Recorrer los IDs de los productos seleccionados
+            $.each(selectedIds, function(index, id) {
+                var rowData = $("#productosGrid").jqGrid('getRowData', id);
+                // Agregar cada producto seleccionado al detalle
+                agregarProductoDetalle(rowData);
+            });
+        } else {
+            bootbox.alert("Por favor, seleccione al menos un producto antes de agregarlo al detalle.");
+        }
+        calcularYActualizarTotal();
+    });
+  
+    inicializarFormatoNumerico();
+});
+function cargarTablaDetalle(){
+    $("#gridDetalleVenta").jqGrid({
+        editurl: 'clientArray',
+  
+        colModel: [
+            { label: "Código", name: "id", width: 100 },
+            { label: "Descripción", name: "mer_descripcion", width: 200 },
+            { label: "Cantidad", name: "cantidad", width: 100, editable: true },
+            { label: "Precio Unitario", name: "mer_precio", width: 150, editable: true ,edittype: 'text'}, // Columna editable
+            { label: "Exenta", name: "exenta", width: 100 ,edittype: 'number'},
+            { label: "Grav. 5%", name: "grav_5", width: 100,edittype: 'number' },
+            { label: "Grav. 10%", name: "grav_10", width: 100,edittype: 'number' },
+            { name: "mer_tipoimpuesto",hidden:true }
+        ],
+        styleUI: "Bootstrap5",
+        viewrecords: true,
+        width: 900,
+        height: 200,
+        rowNum: 10,
+        footerrow: true,
+        userDataOnFooter: true,
+        onSelectRow: function(rowId,cellvalue) {
+            console.log(cellvalue);
+            selectedRowId = rowId;
+            $("#habilitarEdicion, #cerrarEdicion").prop("disabled", false);
+        },
+        beforeEditCell: function(rowid, cellname, value, iRow, iCol) {
+            console.log("aca");
+            if (cellname === 'mer_precio') {
+                // Obtener el input asociado a la celda editada
+                var input = $("#" + rowid + "_" + cellname);
+                
+                // Agregar la clase al input
+                input.addClass("formatoGuarani");
+            }
+        },
+       
+    });
+   
+}
+
+$("#habilitarEdicion").on("click", function() {
+    // Habilitar la edición de campos en el jqGrid
+
+    if (selectedRowId) {
+        // Habilitar la edición en línea en el jqGrid con el rowId seleccionado
+        $("#gridDetalleVenta").jqGrid("editRow", selectedRowId, { keys: true })
+        
+    } else {
+        bootbox.alert("Por favor, seleccione una fila antes de habilitar la edición.");
+    }
+});
+$("#cerrarEdicion").on("click", function() {
+    // Cancelar la edición en línea en el jqGrid
+    var numberOfRows = $("#gridDetalleVenta").jqGrid("getGridParam", "records");
+
+    // Iterar sobre todas las filas y restaurar la edición
+    for (var i = 1; i <= numberOfRows; i++) {
+        $("#gridDetalleVenta").jqGrid("saveRow", i);
+    }
+    calcularYActualizarTotal();
+});
+
+
+function calcularYActualizarTotal() {
+// Calcular y actualizar el total en el footer
+var $grid = $("#gridDetalleVenta");
+var numRows = $grid.jqGrid("getGridParam", "reccount");
+
+for (var i = 1; i <= numRows; i++) {
+    // Obtener los valores actuales de cantidad, mer_precio y mer_tipoimpuesto para cada fila
+    var cantidad = parseFloat($grid.jqGrid("getCell", i, "cantidad"));
+    var prec = parseFloat($grid.jqGrid("getCell", i, "mer_precio"));
+    var tipo = $grid.jqGrid("getCell", i, "mer_tipoimpuesto");
+
+    // Calcular los montos según los valores actuales
+    var exenta = 0;
+    var grav5 = 0;
+    var grav10 = 0;
+    if (tipo === 'EXENTA') {
+        exenta = cantidad * prec;
+    } else if (tipo === 'GRAVADA 5') {
+        grav5 = cantidad * prec;
+    } else if (tipo === 'GRAVADA 10') {
+        grav10 = cantidad * prec;
+    }
+
+    // Formatear los montos en guaraníes
+    exenta =new Intl.NumberFormat("es-PY").format(exenta.toFixed(2));
+    grav5 = new Intl.NumberFormat("es-PY").format(grav5.toFixed(2));
+    grav10 =new Intl.NumberFormat("es-PY").format(grav10.toFixed(2));
+
+    // Actualizar los valores en las columnas exenta, grav_5 y grav_10 para cada fila
+    $grid.jqGrid("setCell", i, "exenta", exenta);
+    $grid.jqGrid("setCell", i, "grav_5", grav5);
+    $grid.jqGrid("setCell", i, "grav_10", grav10);
+}
+
+// Recalcular y actualizar el total en el footer
+var totalExenta = $grid.jqGrid("getCol", "exenta", false, "sum");
+var totalGrav5 = $grid.jqGrid("getCol", "grav_5", false, "sum");
+var totalGrav10 = $grid.jqGrid("getCol", "grav_10", false, "sum");
+
+
+// Formatear los totales en guaraníes
+totalExenta = "Gs. " +new Intl.NumberFormat("es-PY").format(totalExenta.toFixed(2));
+totalGrav5 = "Gs. " + new Intl.NumberFormat("es-PY").format(totalGrav5.toFixed(2));
+totalGrav10 = "Gs. " +new Intl.NumberFormat("es-PY").format(totalGrav10.toFixed(2));
+
+$grid.jqGrid("footerData", "set", {
+    descripcion: "Total:",
+    exenta: totalExenta,
+    grav_5: totalGrav5,
+    grav_10: totalGrav10
+});
+
+
+}
+function agregarProductoDetalle(producto) {
+    // Obtener el jqGrid de detalle
+    console.log(producto);
+    var detalleGrid = $("#gridDetalleVenta");
+
+    // Obtener el ID de la última fila en el jqGrid de detalle
+    var lastRowId = detalleGrid.jqGrid("getDataIDs").length + 1;
+
+    // Agregar una nueva fila al jqGrid de detalle con los datos del producto
+    var cant = parseFloat(producto.cantidad);
+    var prec = parseFloat(producto.mer_precio.replace(".", ""));
+    var exenta = 0;
+    var grav5 = 0;
+    var grav10 = 0;
+
+    if (producto.mer_tipoimpuesto === 'EXENTA') {
+        exenta = parseFloat(cant * prec);
+    } else if (producto.mer_tipoimpuesto === 'GRAVADA 5') {
+        grav5 = parseFloat(cant * prec);
+    } else if (producto.mer_tipoimpuesto === 'GRAVADA 10') {
+        grav10 = parseFloat(cant * prec);
+    }
+
+    // Agregar una nueva fila al jqGrid de detalle con los datos del producto y los montos calculados
+    detalleGrid.jqGrid("addRowData", lastRowId, {
+        id: producto.id,
+        mer_descripcion: producto.mer_descripcion,
+        cantidad: cant,
+        mer_precio: prec,
+        exenta: exenta,
+        grav_5: grav5,
+        grav_10: grav10,
+        mer_tipoimpuesto : producto.mer_tipoimpuesto
+    });
+
+    // Actualizar los datos del jqGrid y recargar la cuadrícula
+    detalleGrid.jqGrid('setGridParam', { data: detalleGrid[0].p.data }).trigger('reloadGrid');
+}
+
 function agregar(){
     //HABILITAR
     $("#cboidfuncionario").removeAttr("disabled").trigger("chosen:updated");
@@ -92,12 +328,12 @@ function merselect() {
 
     var id = $("#cbomercaderias").val();
     //bootbox.alert("EL ID ES: "+id);
-    var dat = id.split("~");
+    //var dat = id.split("~");
     //alert(id);
     //var letra = NumeroALetras(parseInt(dat[1]));
     //alert(letra);
-    $("#txtprecio").val(dat[1]);
-    $('#txtcantidad').select();
+    //$("#txtprecio").val(dat[1]);
+    //$('#txtcantidad').select();
 }
 
 function tiposelect() {

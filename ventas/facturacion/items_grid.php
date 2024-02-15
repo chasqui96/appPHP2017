@@ -1,20 +1,17 @@
 <?php
 require_once '../../clases/conexion.php';
 
+// Parámetros de búsqueda enviados por jqGrid
+
 $page = $_GET['page'];
 $fila= $_GET['rows'];
 $sord = $_GET['sord'];
-$sql = "SELECT * FROM v_cobros WHERE cob_estado ='PENDIENTE'";
+$sql = "SELECT * from v_stock where  stk_cantidad > 0 order by mer_descripcion";
 $sqlCount = "SELECT count(*) FROM v_cobros WHERE cob_estado ='PENDIENTE' ";
 
-$sql .= " ORDER BY 1 ".$sord; 
 $offset = ($page - 1) * $fila;
-
-// Modifica la consulta SQL para incluir la limitación de resultados
-$sql .= " LIMIT $fila OFFSET $offset";
-$result = consultas::get_datos($sql);
-$resultCount = consultas::get_datos($sqlCount);
-
+$result = consultas::get_datos($sql);  
+$resultCount = consultas::get_datos($sqlCount); 
 
 if ($result) {
     $data = array(); // Inicializa un array para almacenar los resultados
@@ -22,16 +19,14 @@ if ($result) {
     // Itera sobre los resultados y agrégalos al array
     foreach ($result as $row) {
         $data[] = array(
-            "id" => $row['id_cobros'], // Se agrega un campo "id" para identificar de manera única cada fila
+            "id" => $row['id_mercaderia'], // Se agrega un campo "id" para identificar de manera única cada fila
             "cell" => array(
-                $row['id_cobros'], // Recibo
-                $row['cliente'],   // Cliente
-                $row['ruc'],       // Ruc
-                $row['cob_fecha_f'], // Fecha
-                number_format($row['cob_efectivo'] , 0, ',', '.'),// Monto
-                $row['id_cliente'],
-                $row['id_apercierre'],
-                $row['fechanormal'],
+                $row['id_mercaderia'],
+                $row['mer_descripcion'],
+                1,
+                number_format($row['mer_precio'], 0, ',', '.'),
+                $row['mer_tipoimpuesto'],
+                $row['stk_cantidad'],
                 // Agrega más campos aquí según sea necesario
             )
         );

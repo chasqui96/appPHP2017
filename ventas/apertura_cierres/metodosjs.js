@@ -13,7 +13,7 @@ $(document).ready(function () {
             { name: 'id_caja', hidden: true },
             { name: 'monto_cierre', hidden: true }
         ],
-        styleUI: "Bootstrap",
+        styleUI: "Bootstrap5",
         viewrecords: true,
         width: 1000,
         height: 400,
@@ -29,6 +29,7 @@ $(document).ready(function () {
             expandOnLoad: false
         },
         onSelectRow: function (rowid, status, e) {
+            console.log(e);
             var rowData = $("#gridCobros").getRowData(rowid);
             seleccion(rowData);
         }
@@ -40,9 +41,7 @@ $(document).ready(function () {
 
 function formatearEnlaceId(cellvalue, options, rowObject) {
 
-    console.log(rowObject);
-    console.log(options);
-    var enlace = '<a style="color:blue; target="_blank" href="arqueo.php?id='+cellvalue +'">'+cellvalue +'</a>';
+    var enlace = '<a style="color:blue;" target="_blank" href="arqueo.php?id='+cellvalue +'">'+cellvalue +'</a>';
     return enlace;
 }
 function showChildGrid(parentRowID, parentRowKey) {
@@ -129,13 +128,13 @@ function get_datos(filtro) {
 }
 
 function seleccion(fila) {
+
     $("#txtcodigo").val(fila.id);
     $("#txtfeaper").val(fila.fecha_aperformat);
     $("#txtfecierre").val(fila.fecha_cierreformat);
     $("#txtmontoini").val(fila.aper_monto);
     $("#idcaja").val(fila.id_caja);
     $("#txtmontocierre").val(fila.monto_cierre);
-    console.log(fila.monto_cierre);
     if (fila.fecha_cierreformat === "" || fila.fecha_cierreformat === null) {
         $('#btnCerrar').removeAttr("disabled");
     } else {

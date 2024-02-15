@@ -232,10 +232,11 @@ if (!$resultim) {
                     </div>
                     <div class="card m-3">
                         <div class="btn-group" role="group" aria-label="Basic outlined example">
-                            <button type="button" onclick="agregar();" id="btnAgregar" class="btn btn-outline-info">Agregar Cobro</button>
-                            <button type="button" onclick="anular(); $('#btnBuscador').click();" id="btnAnular" class="btn btn-outline-info">Anular Cobro</button>
+                          
+                            <button type="button" onclick="anular();" data-bs-toggle="modal" data-bs-target="#panelBuscador"  id="btnAnular" class="btn btn-outline-info">Anular Cobro</button>
                             <button type="button" onclick="location.reload();" id="btnCancelar" class="btn btn-outline-info">Cancelar</button>
                             <button type="button" onclick="grabar();" id="btnGrabar" class="btn btn-outline-info">Guardar Cobro</button>
+                            <button type="button" onclick="cobrar();" data-bs-toggle="modal" data-bs-target="#panelBuscador" id="btnCobrar" class="btn btn-outline-info">Cobrar</button>
                             <button type="button" data-bs-toggle="modal" data-bs-target="#panelBuscador" class="btn btn-outline-info">Buscar Cobro</button>
                         </div>
                     </div>

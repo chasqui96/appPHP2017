@@ -67,7 +67,6 @@ if ($result) {
                 $row['fecha_cierreformat'],   
                 number_format($row['aper_monto'], 0, ',', '.'),       
                 $row['caja_descripcion'], 
-                $row['siguiente_factura'],
                 $row['id_caja'],
                 number_format($row['monto_efectivo']+$row['monto_cheque']+$row['monto_tarjeta'], 0, ',', '.')
                 // Agrega más campos aquí según sea necesario
