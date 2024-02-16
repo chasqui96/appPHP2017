@@ -13,28 +13,36 @@ $(document).ready(function () {
     var selectedRowId; // Variable para almacenar el rowId seleccionado
     var cellvalueJs;
     cargarTablaDetalle();
-   
+    getDeposito();
     
     
-    
-
     $("#productosGrid").jqGrid({
         url: 'items_grid.php', // URL para obtener los productos (cambia por la URL correcta)
         datatype: 'json',
         editurl: 'clientArray',
         colModel: [
         
-            { label: 'Código', name: 'id', width: 100 },
-            { label: 'Descripción', name: 'mer_descripcion', width: 250 },
+            { label: 'Código', name: 'codigo', width: 100 },
+            { label: 'Descripción', name: 'mer_descripcion', width: 250,     search: true,
+            stype: 'text',
+            searchoptions: {
+                sopt: ['eq', 'ne', 'bw', 'bn', 'ew', 'en', 'cn', 'nc'], // Opciones de búsqueda específicas para descripción
+                clearSearch: true // Mostrar botón para limpiar la búsqueda
+            }
+          },
             { label: 'Cantidad', name: 'cantidad', width: 80, editable: true },
             { label: 'Precio', name: 'mer_precio', width: 200 },
-            { label: 'T.Impuesto', name: 'mer_tipoimpuesto', width: 200 },
+            {name: 'mer_tipoimpuesto',hidden:true },
             { label: 'Stock', name: 'stock', width: 70,
               formatter: function (cellvalue) {
                   // Aplicar color rojo o verde según el stock
                   return '<span style="color:' + (cellvalue < 5 ? 'red' : 'green') + '">' + cellvalue + '</span>';
               }
-            }
+            },
+            { label: 'Deposito', name: 'dep_descripcion', width: 200 },
+            {name: 'id_deposito', hidden:true},
+            {name: 'id_mercaderia', hidden:true},
+            
         ],
         styleUI: "Bootstrap5",
         viewrecords: true,
@@ -43,6 +51,10 @@ $(document).ready(function () {
         rowNum: 10,
         multiselect: true, // Habilitar la selección múltiple
         pager: "#productosPager",
+        mtype: 'GET', // Especifica que quieres usar el método GET
+        search: true, // Habilitar la barra de búsqueda
+        // Configurar el evento onChange del campo de búsqueda
+        
         onSelectRow: function(rowId) {
             //var rowData = $("#productosGrid").jqGrid('getRowData', rowId);
             $("#productosGrid").jqGrid("editRow", rowId, { keys: true });
@@ -52,44 +64,62 @@ $(document).ready(function () {
         },
  
     });
- 
+    $("#productosGrid").jqGrid('filterToolbar', { defaultSearch: 'cn' });
     $("#agregarDetalleBtn").on("click", function() {
         var numberOfRows = $("#productosGrid").jqGrid("getGridParam", "records");
-
+    
         // Iterar sobre todas las filas y restaurar la edición
         for (var i = 1; i <= numberOfRows; i++) {
             $("#productosGrid").jqGrid("saveRow", i);
         }
         var selectedIds = $("#productosGrid").jqGrid('getGridParam', 'selarrrow');
-        console.log(selectedIds);
         if (selectedIds.length > 0) {
             // Recorrer los IDs de los productos seleccionados
             $.each(selectedIds, function(index, id) {
                 var rowData = $("#productosGrid").jqGrid('getRowData', id);
-                // Agregar cada producto seleccionado al detalle
                 agregarProductoDetalle(rowData);
+                
             });
         } else {
             bootbox.alert("Por favor, seleccione al menos un producto antes de agregarlo al detalle.");
         }
         calcularYActualizarTotal();
     });
+    
   
     inicializarFormatoNumerico();
 });
+
+function getDeposito() {
+    
+    $.post("deposito.php")
+            .done(function (data) {
+                $("#cboiddepositobuscador").html(data).trigger('chosen:updated').trigger('change');
+        
+            });
+            
+}
+function filtrarPorDeposito() {
+    var idDeposito = $("#cboiddepositobuscador").val();
+    console.log(idDeposito);
+    // Aquí puedes utilizar el valor de idDeposito para filtrar tu jqGrid
+    $("#productosGrid").jqGrid('setGridParam', { postData: { id_deposito: idDeposito }, page: 1 }).trigger('reloadGrid');
+}
 function cargarTablaDetalle(){
     $("#gridDetalleVenta").jqGrid({
         editurl: 'clientArray',
   
         colModel: [
-            { label: "Código", name: "id", width: 100 },
+            { label: "Código", name: "codigo", width: 100 },
             { label: "Descripción", name: "mer_descripcion", width: 200 },
-            { label: "Cantidad", name: "cantidad", width: 100, editable: true },
-            { label: "Precio Unitario", name: "mer_precio", width: 150, editable: true ,edittype: 'text'}, // Columna editable
-            { label: "Exenta", name: "exenta", width: 100 ,edittype: 'number'},
-            { label: "Grav. 5%", name: "grav_5", width: 100,edittype: 'number' },
-            { label: "Grav. 10%", name: "grav_10", width: 100,edittype: 'number' },
-            { name: "mer_tipoimpuesto",hidden:true }
+            { label: "Cantidad", name: "cantidad", width: 100, editable: true},
+            { label: "Precio Unitario", name: "mer_precio", width: 150, editable: true ,edittype: 'text'  ,formatoptions: { thousandsSeparator: '.', decimalSeparator: ',' }}, // Columna editable
+            { label: "Exenta", name: "exenta", width: 100 ,formatter: 'number', formatoptions: {  thousandsSeparator: '.', decimalSeparator: ',' }},
+            { label: "Grav. 5%", name: "grav_5", width: 100,formatter: 'number', formatoptions: {  thousandsSeparator: '.', decimalSeparator: ',' } },
+            { label: "Grav. 10%", name: "grav_10", width: 100,formatter: 'number', formatoptions: {  thousandsSeparator: '.', decimalSeparator: ',' } },
+            { name: "mer_tipoimpuesto",hidden:true },
+            { name: "id_deposito",hidden:true },
+            {name: 'id_mercaderia', hidden:true}
         ],
         styleUI: "Bootstrap5",
         viewrecords: true,
@@ -165,9 +195,9 @@ for (var i = 1; i <= numRows; i++) {
     }
 
     // Formatear los montos en guaraníes
-    exenta =new Intl.NumberFormat("es-PY").format(exenta.toFixed(2));
-    grav5 = new Intl.NumberFormat("es-PY").format(grav5.toFixed(2));
-    grav10 =new Intl.NumberFormat("es-PY").format(grav10.toFixed(2));
+    // exenta =new Intl.NumberFormat("es-PY").format(exenta.toFixed(2));
+    // grav5 = new Intl.NumberFormat("es-PY").format(grav5.toFixed(2));
+    // grav10 =new Intl.NumberFormat("es-PY").format(grav10.toFixed(2));
 
     // Actualizar los valores en las columnas exenta, grav_5 y grav_10 para cada fila
     $grid.jqGrid("setCell", i, "exenta", exenta);
@@ -182,54 +212,123 @@ var totalGrav10 = $grid.jqGrid("getCol", "grav_10", false, "sum");
 
 
 // Formatear los totales en guaraníes
-totalExenta = "Gs. " +new Intl.NumberFormat("es-PY").format(totalExenta.toFixed(2));
-totalGrav5 = "Gs. " + new Intl.NumberFormat("es-PY").format(totalGrav5.toFixed(2));
-totalGrav10 = "Gs. " +new Intl.NumberFormat("es-PY").format(totalGrav10.toFixed(2));
+var totalAPagar = (parseFloat(totalExenta)+parseFloat(totalGrav5)+parseFloat(totalGrav10));
+
+var iva5 = parseFloat(totalAPagar / 21);
+var iva10 = parseFloat(totalAPagar / 11);
 
 $grid.jqGrid("footerData", "set", {
-    descripcion: "Total:",
+    id: "SubTotal",
     exenta: totalExenta,
     grav_5: totalGrav5,
     grav_10: totalGrav10
 });
+// Seleccionar el footer del jqGrid
+
+
+var footer = $("#gridDetalleVenta").closest(".ui-jqgrid").find(".ui-jqgrid-ftable");
+
+// Eliminar la fila específica por su ID
+footer.find('#filaTotal').remove();
+footer.find('#filaIva').remove();
+footer.css("background-color", "#204d74");
+// Construir la fila HTML personalizada
+var customFooterRowHtml = '<tr role="row" id="filaTotal" class="footrow footrow-ltr total">' +
+    '<td role="gridcell" colspan="6"  style="width: 104px;" aria-describedby="gridDetalleVenta_id" title="Total">Total</td>' +
+    
+    '<td role="gridcell" style="width: 101px;" aria-describedby="gridDetalleVenta_grav_10" title="total">' + new Intl.NumberFormat("es-PY").format(totalAPagar) + '</td>' +
+    '</tr>';
+
+customFooterRowHtml += '<tr role="row" id="filaIva" class="footrow footrow-ltr via">' +
+    '<td role="gridcell" style="width: 104px;" aria-describedby="gridDetalleVenta_id" title="Total">Liquidacion IVA</td>' +
+    '<td role="gridcell" style="width: 104px;" aria-describedby="gridDetalleVenta_mer_descripcion">(5%): ' + new Intl.NumberFormat("es-PY").format(iva5) + '</td>' +
+    '<td role="gridcell" style="width: 155px;" aria-describedby="gridDetalleVenta_cantidad">(10%): ' + new Intl.NumberFormat("es-PY").format(iva10) + '</td>' +
+    '<td role="gridcell" style="width: 155px;" aria-describedby="gridDetalleVenta_mer_precio">&nbsp;</td>' +
+    '<td role="gridcell" style="width: 155px;" aria-describedby="gridDetalleVenta_exenta">&nbsp;</td>' +
+    '<td role="gridcell" style="width: 155px;" aria-describedby="gridDetalleVenta_grav_5">&nbsp;</td>' +
+    '<td role="gridcell" style="width: 101px;" aria-describedby="gridDetalleVenta_grav_10" title="total"></td>' +
+    '</tr>';
+
+// Agregar la fila HTML personalizada al footer del jqGrid
+footer.append(customFooterRowHtml);
+
+
 
 
 }
 function agregarProductoDetalle(producto) {
     // Obtener el jqGrid de detalle
-    console.log(producto);
+    
     var detalleGrid = $("#gridDetalleVenta");
 
     // Obtener el ID de la última fila en el jqGrid de detalle
     var lastRowId = detalleGrid.jqGrid("getDataIDs").length + 1;
-
+     console.log(producto.cantidad);
     // Agregar una nueva fila al jqGrid de detalle con los datos del producto
-    var cant = parseFloat(producto.cantidad);
+    var cantidad = parseFloat(producto.cantidad);
     var prec = parseFloat(producto.mer_precio.replace(".", ""));
     var exenta = 0;
     var grav5 = 0;
     var grav10 = 0;
 
     if (producto.mer_tipoimpuesto === 'EXENTA') {
-        exenta = parseFloat(cant * prec);
+        exenta = parseFloat(cantidad * prec);
+     
+         grav5 = 0;
+         grav10 = 0;
     } else if (producto.mer_tipoimpuesto === 'GRAVADA 5') {
-        grav5 = parseFloat(cant * prec);
+        grav5 = parseFloat(cantidad * prec);
+        exenta = 0;
+        grav10 = 0;
     } else if (producto.mer_tipoimpuesto === 'GRAVADA 10') {
-        grav10 = parseFloat(cant * prec);
+        grav5 = 0;
+        exenta = 0;
+        grav10 = parseFloat(cantidad * prec);
     }
+    var selectedIdsMercaderia = detalleGrid.jqGrid("getCol", "id_mercaderia");
+    console.log(selectedIdsMercaderia);
+    if (selectedIdsMercaderia.length > 0) {
+        // Recorrer los IDs de los productos seleccionados
+        $.each(selectedIdsMercaderia, function(index, id) {
+            if(id === producto.id_mercaderia){
 
-    // Agregar una nueva fila al jqGrid de detalle con los datos del producto y los montos calculados
-    detalleGrid.jqGrid("addRowData", lastRowId, {
-        id: producto.id,
-        mer_descripcion: producto.mer_descripcion,
-        cantidad: cant,
-        mer_precio: prec,
-        exenta: exenta,
-        grav_5: grav5,
-        grav_10: grav10,
-        mer_tipoimpuesto : producto.mer_tipoimpuesto
-    });
-
+                console.log(id +"="+producto.id_mercaderia);
+                bootbox.alert('EL ITEMS '+producto.mer_descripcion+' YA FUE AGREGADO AL DETALLE    <span class="glyphicon glyphicon-warning-sign"></span>')
+                
+            }else{
+                console.log("en el else");
+                detalleGrid.jqGrid("addRowData", lastRowId, {
+                    codigo: producto.codigo,
+                    mer_descripcion: producto.mer_descripcion,
+                    cantidad: cantidad,
+                    mer_precio: prec,
+                    exenta: exenta,
+                    grav_5: grav5,
+                    grav_10: grav10,
+                    mer_tipoimpuesto : producto.mer_tipoimpuesto,
+                    id_deposito:producto.id_deposito,
+                    id_mercaderia: producto.id_mercaderia
+                });
+             
+            }
+            
+        });
+    } else {
+        console.log("en el else 2");
+        detalleGrid.jqGrid("addRowData", lastRowId, {
+            codigo: producto.codigo,
+            mer_descripcion: producto.mer_descripcion,
+            cantidad: cantidad,
+            mer_precio: prec,
+            exenta: exenta,
+            grav_5: grav5,
+            grav_10: grav10,
+            mer_tipoimpuesto : producto.mer_tipoimpuesto,
+            id_deposito:producto.id_deposito,
+            id_mercaderia: producto.id_mercaderia
+        });
+    }
+   
     // Actualizar los datos del jqGrid y recargar la cuadrícula
     detalleGrid.jqGrid('setGridParam', { data: detalleGrid[0].p.data }).trigger('reloadGrid');
 }

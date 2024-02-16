@@ -15,6 +15,7 @@ if ($result[0]['id_usuario']) {
     $_SESSION['fun_apellidos'] = $result[0]['fun_apellidos'];
     $_SESSION['suc_descripcion'] = $result[0]['suc_descripcion'];
     $_SESSION['id_sucursal'] = $result[0]['id_sucursal'];
+  
     echo 'OK';
 } else {
     echo "USUARIO O CONTRASEÑA INCORRECTA";

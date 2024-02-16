@@ -251,18 +251,19 @@ if (!$resultim) {
                         <div class="card-header"><strong>Detalles</strong></div>
                         <div class="card-body align-self-center">
                             <div class="row ">
+
                                 <div class="col ">
                                     <!-- Contenido de tu div -->
                                     <table id="gridDetalleVenta"></table>
 
                                 </div>
                                 <div class="col">
-                                <div class="col-sm-1">
-                                    <small><a class="btn btn-sm btn-info" role="button" data-title="Agregar" id="openModalBtn" data-bs-toggle="modal" data-bs-target="#panelBuscador"><span class="glyphicon glyphicon glyphicon-plus"></span></a>
-                                    </small>
-                                </div>
+                                    <div class="col-sm-1">
+                                        <small><a class="btn btn-sm btn-info" role="button" data-title="Agregar" id="openModalBtn" data-bs-toggle="modal" data-bs-target="#panelBuscador"><span class="glyphicon glyphicon glyphicon-plus"></span></a>
+                                        </small>
+                                    </div>
 
-  
+
                                 </div>
                             </div>
                         </div>
@@ -330,18 +331,30 @@ if (!$resultim) {
     </div>
     </div>
 
-  
+
     <div class="modal fade " id="panelBuscador" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">BUSCADOR COBRO</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">BUSCADOR PRODUCTO</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body align-self-center">
                     <div class="row">
-                        <div class="col-md-12" >
+                        <div class="col-md-3">
+
+                            <label class="control-label">Depósito</label>
+
+                            <select class="form-control chosen-select" id="cboiddepositobuscador" onchange="filtrarPorDeposito()">
+                            <option value="0">Seleccione</option>
+                            </select>
+                        </div>
+                        
+                    </div>                            
+                    <div class="row mt-2">
+                       
+                        <div class="col-md-12">
                             <table id="productosGrid"></table>
                             <div id="productosPager"></div>
                         </div>
