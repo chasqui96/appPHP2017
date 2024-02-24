@@ -53,7 +53,7 @@ if (!$resultim) {
             -moz-osx-font-smoothing: grayscale;
         }
 
-        form {
+        #formulario {
             background: #A9D0F5;
             /* fallback for old browsers */
             background: -webkit-linear-gradient(right, #A9D0F5, #E0F8F1);
@@ -157,7 +157,7 @@ if (!$resultim) {
                                         <?php } ?>
                                     </select>
                                 </div>
-                                <div class="col-sm-1">
+                                <!-- <div class="col-sm-1">
                                     <label for="cboiddeposito" class="control-label">Deposito</label>
                                 </div>
                                 <div class="col-sm-3">
@@ -170,7 +170,7 @@ if (!$resultim) {
                                             <option value="<?php echo $rsdeposito['id_deposito']; ?>"><?php echo $rsdeposito['dep_descripcion']; ?></option>
                                         <?php } ?>
                                     </select>
-                                </div>
+                                </div> -->
                             </div>
                             <div class="row m-1">
                                 <div class="col-sm-1"></div>
@@ -221,7 +221,7 @@ if (!$resultim) {
                                     </select>
                                 </div>
                                 <div class="col-sm-1">
-                                    <small><a class="btn btn-sm btn-info" role="button" data-title="Agregar" target="_blank" href="../../referenciales/ref_ventas/clientes/"><span class="glyphicon glyphicon glyphicon-plus"></span></a>
+                                    <small><a class="btn btn-sm btn-info" role="button" data-title="Agregar" data-bs-toggle="modal" data-bs-target="#modalCliente"><span class="glyphicon glyphicon glyphicon-plus"></span></a>
                                     </small>
                                 </div>
                             </div>
@@ -259,7 +259,7 @@ if (!$resultim) {
                                 </div>
                                 <div class="col">
                                     <div class="col-sm-1">
-                                        <small><a class="btn btn-sm btn-info" role="button" data-title="Agregar" id="openModalBtn" data-bs-toggle="modal" data-bs-target="#panelBuscador"><span class="glyphicon glyphicon glyphicon-plus"></span></a>
+                                        <small><a class="btn btn-sm btn-info" role="button" data-title="Agregar" id="openModalBtn"><span class="glyphicon glyphicon glyphicon-plus"></span></a>
                                         </small>
                                     </div>
 
@@ -347,13 +347,13 @@ if (!$resultim) {
                             <label class="control-label">Depósito</label>
 
                             <select class="form-control chosen-select" id="cboiddepositobuscador" onchange="filtrarPorDeposito()">
-                            <option value="0">Seleccione</option>
+                                <option value="0">Seleccione</option>
                             </select>
                         </div>
-                        
-                    </div>                            
+
+                    </div>
                     <div class="row mt-2">
-                       
+
                         <div class="col-md-12">
                             <table id="productosGrid"></table>
                             <div id="productosPager"></div>
@@ -372,7 +372,66 @@ if (!$resultim) {
         </div>
     </div>
 
+    <div class="modal fade" id="modalCliente" tabindex="-1" aria-labelledby="modalClienteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalClienteLabel">Nuevo Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body align-content-center">
+                  
+                    <div class="card">
+                        <div class="card-header">
+                            Cliente
+                        </div>
+                        <div class="card-body">
+                            <form id="formBuscarCliente" method="post">
+                                
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" id="numero_documento" placeholder="Ingrese RUC" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                            <button class="btn btn-outline-primary" type="button" id="buscarClienteBtn"><span class="glyphicon glyphicon-search"></span></button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                    <input type="checkbox" id="clienteFisico" name="tipoCliente" value="fisico" style="font-size: 3px;">
+                                    <label for="clienteFisico">Física</label>
+    
+                                    <input type="checkbox" id="clienteJuridico" name="tipoCliente" value="juridico" style="font-size: 123px;">
+                                    <label for="clienteJuridico">Jurídica</label>
+                                    </div>
+                                </div>
+                                <div id="resultadoCliente">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label for="inputCity" class="form-label">RUC/CI</label>
+                                            <input type="text" class="form-control" id="ruc_numero">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="inputState" class="form-label">DV</label>
+                                            <input type="text" class="form-control" id="dv">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="inputZip" class="form-label">Razon Social:</label>
+                                            <input type="text" class="form-control" id="razon_social">
+                                        </div>
+                                    </div>
 
+                                </div>
+                            </form>
+
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 

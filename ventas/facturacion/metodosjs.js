@@ -42,6 +42,7 @@ $(document).ready(function () {
             { label: 'Deposito', name: 'dep_descripcion', width: 200 },
             {name: 'id_deposito', hidden:true},
             {name: 'id_mercaderia', hidden:true},
+            {name: 'stock_deposito', hidden:true}
             
         ],
         styleUI: "Bootstrap5",
@@ -65,12 +66,24 @@ $(document).ready(function () {
  
     });
     $("#productosGrid").jqGrid('filterToolbar', { defaultSearch: 'cn' });
+    $("#openModalBtn").click(function() {
+        $("#panelBuscador").modal("show");
+        var numberOfRows1 = $("#productosGrid").jqGrid("getGridParam", "records");
+        for (var i2 = 1; i2 <= numberOfRows1; i2++) {
+            $("#productosGrid").jqGrid("restoreRow", i2);
+            $("#productosGrid").jqGrid("setCell",i2, "cantidad", 1);
+         
+            $("#productosGrid").jqGrid("saveRow", i2);
+        }
+    });
     $("#agregarDetalleBtn").on("click", function() {
+       
         var numberOfRows = $("#productosGrid").jqGrid("getGridParam", "records");
     
         // Iterar sobre todas las filas y restaurar la edición
         for (var i = 1; i <= numberOfRows; i++) {
             $("#productosGrid").jqGrid("saveRow", i);
+    
         }
         var selectedIds = $("#productosGrid").jqGrid('getGridParam', 'selarrrow');
         if (selectedIds.length > 0) {
@@ -80,9 +93,14 @@ $(document).ready(function () {
                 agregarProductoDetalle(rowData);
                 
             });
+    
+            // Iterar sobre todas las filas y restaurar la edición
+           
+            $("#productosGrid").jqGrid("resetSelection").trigger('reloadGrid');
         } else {
             bootbox.alert("Por favor, seleccione al menos un producto antes de agregarlo al detalle.");
         }
+       
         calcularYActualizarTotal();
     });
     
@@ -218,7 +236,7 @@ var iva5 = parseFloat(totalAPagar / 21);
 var iva10 = parseFloat(totalAPagar / 11);
 
 $grid.jqGrid("footerData", "set", {
-    id: "SubTotal",
+    codigo: "SubTotal",
     exenta: totalExenta,
     grav_5: totalGrav5,
     grav_10: totalGrav10
@@ -228,13 +246,10 @@ $grid.jqGrid("footerData", "set", {
 
 var footer = $("#gridDetalleVenta").closest(".ui-jqgrid").find(".ui-jqgrid-ftable");
 
-// Eliminar la fila específica por su ID
-footer.find('#filaTotal').remove();
-footer.find('#filaIva').remove();
-footer.css("background-color", "#204d74");
+
 // Construir la fila HTML personalizada
 var customFooterRowHtml = '<tr role="row" id="filaTotal" class="footrow footrow-ltr total">' +
-    '<td role="gridcell" colspan="6"  style="width: 104px;" aria-describedby="gridDetalleVenta_id" title="Total">Total</td>' +
+    '<td role="gridcell" colspan="6"  style="width: 104px;" aria-describedby="gridDetalleVenta_codigo" title="Total">Total a Cobrar</td>' +
     
     '<td role="gridcell" style="width: 101px;" aria-describedby="gridDetalleVenta_grav_10" title="total">' + new Intl.NumberFormat("es-PY").format(totalAPagar) + '</td>' +
     '</tr>';
@@ -258,80 +273,74 @@ footer.append(customFooterRowHtml);
 }
 function agregarProductoDetalle(producto) {
     // Obtener el jqGrid de detalle
-    
     var detalleGrid = $("#gridDetalleVenta");
 
     // Obtener el ID de la última fila en el jqGrid de detalle
     var lastRowId = detalleGrid.jqGrid("getDataIDs").length + 1;
-     console.log(producto.cantidad);
-    // Agregar una nueva fila al jqGrid de detalle con los datos del producto
+
+    // Convertir la cantidad y el precio a números flotantes
     var cantidad = parseFloat(producto.cantidad);
     var prec = parseFloat(producto.mer_precio.replace(".", ""));
+
+    // Calcular los montos gravados y exentos según el tipo de impuesto
     var exenta = 0;
     var grav5 = 0;
     var grav10 = 0;
 
     if (producto.mer_tipoimpuesto === 'EXENTA') {
         exenta = parseFloat(cantidad * prec);
-     
-         grav5 = 0;
-         grav10 = 0;
     } else if (producto.mer_tipoimpuesto === 'GRAVADA 5') {
         grav5 = parseFloat(cantidad * prec);
-        exenta = 0;
-        grav10 = 0;
     } else if (producto.mer_tipoimpuesto === 'GRAVADA 10') {
-        grav5 = 0;
-        exenta = 0;
         grav10 = parseFloat(cantidad * prec);
     }
-    var selectedIdsMercaderia = detalleGrid.jqGrid("getCol", "id_mercaderia");
-    console.log(selectedIdsMercaderia);
-    if (selectedIdsMercaderia.length > 0) {
-        // Recorrer los IDs de los productos seleccionados
-        $.each(selectedIdsMercaderia, function(index, id) {
-            if(id === producto.id_mercaderia){
+   
 
-                console.log(id +"="+producto.id_mercaderia);
-                bootbox.alert('EL ITEMS '+producto.mer_descripcion+' YA FUE AGREGADO AL DETALLE    <span class="glyphicon glyphicon-warning-sign"></span>')
-                
-            }else{
-                console.log("en el else");
-                detalleGrid.jqGrid("addRowData", lastRowId, {
-                    codigo: producto.codigo,
-                    mer_descripcion: producto.mer_descripcion,
-                    cantidad: cantidad,
-                    mer_precio: prec,
-                    exenta: exenta,
-                    grav_5: grav5,
-                    grav_10: grav10,
-                    mer_tipoimpuesto : producto.mer_tipoimpuesto,
-                    id_deposito:producto.id_deposito,
-                    id_mercaderia: producto.id_mercaderia
-                });
-             
-            }
-            
-        });
-    } else {
-        console.log("en el else 2");
-        detalleGrid.jqGrid("addRowData", lastRowId, {
-            codigo: producto.codigo,
-            mer_descripcion: producto.mer_descripcion,
-            cantidad: cantidad,
-            mer_precio: prec,
-            exenta: exenta,
-            grav_5: grav5,
-            grav_10: grav10,
-            mer_tipoimpuesto : producto.mer_tipoimpuesto,
-            id_deposito:producto.id_deposito,
-            id_mercaderia: producto.id_mercaderia
-        });
+    // Buscar si la mercadería ya está en el detalle
+    var rowId = detalleGrid.jqGrid("getDataIDs").find(function(id) {
+        return detalleGrid.jqGrid("getCell", id, "id_mercaderia") === producto.id_mercaderia;
+    });
+    
+
+    if (rowId) {
+        
+        var existingCantidad = parseFloat(detalleGrid.jqGrid("getCell", rowId, "cantidad"));
+        existingCantidad =  existingCantidad + cantidad
     }
+    console.log(producto.stock_deposito);
+    console.log(    producto.cantidad);
+
+    if (producto.stock_deposito < existingCantidad) {
+        bootbox.alert('NO HAY SUFICIENTE STOCK PARA AGREGAR <span class="glyphicon glyphicon-ban-circle" style="font-size:50px"></span>'); 	
+        return; // Detener la función si no hay suficiente stock
+    }else{
+        if (rowId) {
+            // Si la mercadería ya está en el detalle, sumar la cantidad a la fila existente
+            bootbox.alert('EL ITEMS '+producto.mer_descripcion+', YA EXISTE EN EL DETALLE , SE AGREGRAN '+cantidad+' ITEMS MAS AL DETALLE   <span class="glyphicon glyphicon-warning-sign" style="font-size:50px"></span>')
+            // var existingCantidad = parseFloat(detalleGrid.jqGrid("getCell", rowId, "cantidad"));
+            detalleGrid.jqGrid("setCell", rowId, "cantidad", existingCantidad);
+        } else {
+            // Si la mercadería no está en el detalle, agregar una nueva fila
+            detalleGrid.jqGrid("addRowData", lastRowId, {
+                codigo: producto.codigo,
+                mer_descripcion: producto.mer_descripcion,
+                cantidad: cantidad,
+                mer_precio: prec,
+                exenta: exenta,
+                grav_5: grav5,
+                grav_10: grav10,
+                mer_tipoimpuesto: producto.mer_tipoimpuesto,
+                id_deposito: producto.id_deposito,
+                id_mercaderia: producto.id_mercaderia
+            });
+        }
+    }
+   
    
     // Actualizar los datos del jqGrid y recargar la cuadrícula
     detalleGrid.jqGrid('setGridParam', { data: detalleGrid[0].p.data }).trigger('reloadGrid');
 }
+
 
 function agregar(){
     //HABILITAR
@@ -368,7 +377,25 @@ function anular(){
     //VALOR DE LA OPERACION
     $("#operacion").val("2");
 }
+$("#buscarClienteBtn").click(function() {
+    // Obtener el número de documento ingresado por el usuario
+    var numero_documento = $("#numero_documento").val();
 
+    // Realizar la solicitud AJAX
+    $.ajax({
+        url: `consulta_cliente_buscador.php`, // Cambia "ruta_destino.php" por la URL a la que deseas enviar la solicitud AJAX
+        method: "POST",
+        data: { numero_documento: numero_documento },
+        success: function(response) {
+            // Mostrar los resultados en el contenedor designado
+            $("#resultadoCliente").empty();
+            $("#resultadoCliente").html(response);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al realizar la solicitud AJAX: " + error);
+        }
+    });
+});
 function grabar(){
     var salida = '{';
         $("#grilladetalle tbody tr").each(function (index) {

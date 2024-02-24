@@ -80,6 +80,7 @@ if ($result) {
                 $row['dep_descripcion'],
                 $row['id_deposito'],
                 $row['id_mercaderia'],
+                $row['stk_cantidad']
                 // Agrega más campos aquí según sea necesario
             )
         );
