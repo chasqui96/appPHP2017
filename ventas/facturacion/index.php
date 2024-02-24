@@ -212,7 +212,7 @@ if (!$resultim) {
                                 <div class="col-sm-6">
                                     <select class="form-control chosen-select" id="cboidclientes" disabled="">
                                         <?php
-                                        $sqlclientes = "select * from clientes order by 2";
+                                        $sqlclientes = "select * from clientes order by 1 desc";
                                         $rsclientes = consultas::get_datos($sqlclientes);
                                         foreach ($rsclientes as $rscliente) {
                                         ?>
@@ -386,7 +386,7 @@ if (!$resultim) {
                             Cliente
                         </div>
                         <div class="card-body">
-                            <form id="formBuscarCliente" method="post">
+                            <form id="formCrearCliente" method="post">
                                 
                                 <div class="row">
                                     <div class="col-md-3">
@@ -395,31 +395,70 @@ if (!$resultim) {
                                             <button class="btn btn-outline-primary" type="button" id="buscarClienteBtn"><span class="glyphicon glyphicon-search"></span></button>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                    <input type="checkbox" id="clienteFisico" name="tipoCliente" value="fisico" style="font-size: 3px;">
-                                    <label for="clienteFisico">Física</label>
-    
-                                    <input type="checkbox" id="clienteJuridico" name="tipoCliente" value="juridico" style="font-size: 123px;">
-                                    <label for="clienteJuridico">Jurídica</label>
-                                    </div>
+                                   
                                 </div>
                                 <div id="resultadoCliente">
                                     <div class="row">
                                         <div class="col-md-3">
                                             <label for="inputCity" class="form-label">RUC/CI</label>
-                                            <input type="text" class="form-control" id="ruc_numero">
+                                            <input type="text" class="form-control" name="ruc_numero" id="ruc_numero">
                                         </div>
                                         <div class="col-md-2">
-                                            <label for="inputState" class="form-label">DV</label>
-                                            <input type="text" class="form-control" id="dv">
+                                            <label for="inputState" class="form-label">DV</label>   
+                                            <input type="text" class="form-control" name="dv"  id="dv" >
                                         </div>
                                         <div class="col-md-6">
                                             <label for="inputZip" class="form-label">Razon Social:</label>
-                                            <input type="text" class="form-control" id="razon_social">
+                                            <input type="text" class="form-control" name="razon_social"  id="razon_social">
                                         </div>
                                     </div>
-
+                                    
                                 </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        <label for="inputCity" class="form-label">Correo</label>
+                                        <input type="text" class="form-control" name="correo"  id="correo" >
+                                    </div>
+                                    <div class="col-md-4">
+                                    <label for="inputCity" class="form-label">Ciudad</label>
+                                        <select id="id_ciudad" name="id_ciudad" class="form-control chosen-select">
+                                            <?php
+                                            $sqlsuc = "select * from ciudades order by 1 desc";
+                                            $result = consultas::get_datos($sqlsuc);
+                                            foreach ($result as $rs) {
+                                            
+                                            ?>
+                                            <option value="<?php echo $rs['id_ciudad'];?>">
+                                                <?php echo $rs['ciu_descripcion'];?>
+                                            </option>
+                                            <?php
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                  
+                                   
+                                </div>
+                                <div class="row">
+                                   <div class="col-md-6">
+                                        <label for="inputCity" class="form-label">Direccion</label>
+                                        <input type="text" class="form-control" name="direccion"  id="direccion" >
+                                    </div>
+                                    <div class="col-md-3">
+                                   
+                                        <label for="inputCity" class="form-label">Telefono</label>
+                                        <input type="text" class="form-control" name="telefono" id="telefono" >
+                            
+                                    </div>
+                                   <div class="col-md-3" style="margin-top: 2rem!important;">
+                                        <label for="clienteFisico">Física</label>
+                                        <input type="checkbox" id="clienteFisico" name="tipoCliente" value="1" >
+                                        
+                                        <label for="clienteJuridico">Jurídica</label>
+                                        <input type="checkbox" id="clienteJuridico" name="tipoCliente" value="2" >
+                                   </div>
+                                </div>
+                               
                             </form>
 
 
@@ -427,6 +466,11 @@ if (!$resultim) {
 
                     </div>
 
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="agregarClienteBtn" >Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="limpiarFormulario();" id="limpiarClienteBtn">Limpiar</button>
 
                 </div>
             </div>
@@ -488,7 +532,24 @@ if (!$resultim) {
     <script src="../../js/chosenselect.js"></script>
     <script src="../../src/bootbox/bootbox.all.js"></script>
     <script src="metodosjs.js"></script>
+  <style>
 
+
+/* Estilo del checkbox personalizado cuando está marcado */
+
+
+/* Estilo del indicador (marcado) dentro del checkbox */
+input[type="checkbox"] {
+
+    width: 25px; /* Tamaño del indicador */
+    height: 25px; /* Tamaño del indicador */
+
+}
+
+
+
+
+  </style>
 </body>
 
 </html>
