@@ -210,14 +210,8 @@ if (!$resultim) {
                                     <label for="cboidcliente" class="control-label">Clientes</label>
                                 </div>
                                 <div class="col-sm-6">
-                                    <select class="form-control chosen-select" id="cboidclientes" disabled="">
-                                        <?php
-                                        $sqlclientes = "select * from clientes order by 1 desc";
-                                        $rsclientes = consultas::get_datos($sqlclientes);
-                                        foreach ($rsclientes as $rscliente) {
-                                        ?>
-                                            <option value="<?php echo $rscliente['id_cliente']; ?>"><?php echo $rscliente['cli_razonsocial'] . ' - Ruc: ' . $rscliente['cli_ruc']; ?></option>
-                                        <?php } ?>
+                                    <select class="form-control chosen-select clienteCombo" id="cboidclientes" disabled="">
+                                      
                                     </select>
                                 </div>
                                 <div class="col-sm-1">

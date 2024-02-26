@@ -14,7 +14,7 @@ $(document).ready(function () {
     var cellvalueJs;
     cargarTablaDetalle();
     getDeposito();
-    
+    clienteSelect();
     
     $("#productosGrid").jqGrid({
         url: 'items_grid.php', // URL para obtener los productos (cambia por la URL correcta)
@@ -741,6 +741,31 @@ $('#ruc_numero').keypress(function (e) {
       $('#dv').val(dv);
     }
 });
+$('#numero_documento').keypress(function (e) {
+   
+    if (e.which === 13) {
+        var numero_documento = $("#numero_documento").val();
+
+        // Realizar la solicitud AJAX
+        $.ajax({
+            url: `consulta_cliente_buscador.php`, // Cambia "ruta_destino.php" por la URL a la que deseas enviar la solicitud AJAX
+            method: "POST",
+            data: { numero_documento: numero_documento },
+            success: function(response) {
+                // Mostrar los resultados en el contenedor designado
+                $("#resultadoCliente").empty();
+                $("#resultadoCliente").html(response);
+                var dv =  calcularDigitoVerificador($('#ruc_numero').val(),11);
+                $('#dv').val(dv);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error al realizar la solicitud AJAX: " + error);
+            }
+        });
+      }
+    // Realizar la solicitud AJAX
+   
+});
 function calcularDigitoVerificador(p_ruc, p_basemax) {
 
     p_basemax = typeof p_basemax !== 'undefined' ? p_basemax : 11;
@@ -797,6 +822,7 @@ $('#agregarClienteBtn').click(function(event) {
       data: formData,
       success: function(response) {
         if(response > 0){
+            clienteSelect();
             var nuevoCliente = parseInt(response);
             $("#cboidclientes").val(nuevoCliente).trigger("chosen:updated");
          
@@ -820,6 +846,36 @@ $('#agregarClienteBtn').click(function(event) {
 function  limpiarFormulario() {
     $("#formCrearCliente")[0].reset();
 }
+
+// Función para recargar el contenido del select y hacer una nueva consulta al backend
+function clienteSelect() {
+    // Realizar una solicitud AJAX para obtener los nuevos datos del backend
+    $.ajax({
+        url: 'cliente_select.php', // URL de tu script en el backend que maneja la consulta y devuelve los nuevos datos
+        type: 'GET', // O 'POST' dependiendo de cómo manejes las solicitudes en tu backend
+        dataType: 'json', // El tipo de datos que esperas recibir del backend
+        success: function(data) {
+            console.log(data);
+            // Limpiar el contenido actual del select
+            $('.clienteCombo').empty();
+            
+            // Agregar las nuevas opciones al select basadas en los datos recibidos del backend
+            $.each(data, function(key, value) {
+                $('.clienteCombo').append($('<option>').text(value.text).attr('value', value.value));
+            });
+            
+            // Actualizar Chosen después de modificar el contenido del select
+            $('.clienteCombo').trigger('chosen:updated');
+        },
+        error: function(xhr, status, error) {
+            // Manejar errores de la solicitud AJAX, si es necesario
+            console.error('Error al cargar los datos del servidor:', error);
+        }
+    });
+}
+
+// Llamar a la función de recarga cuando sea necesario, por ejemplo, al hacer clic en un botón
+
 
 
 
