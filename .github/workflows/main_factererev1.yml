@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy PHP app to Azure Web App - facterereV1
+name: Build and deploy PHP app to Azure Web App - FacterereV1
 
 on:
   push:
@@ -60,7 +60,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
-          app-name: 'facterereV1'
+          app-name: 'FacterereV1'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2AC059C385AA47E9B3C36B0EEF57C061 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EF1F5ECE919A48E18C191902542ED39F }}
           package: .
