@@ -15,7 +15,7 @@ $(document).ready(function () {
     cargarTablaDetalle();
     getDeposito();
     clienteSelect();
-    
+    timbradoSelect();
     $("#productosGrid").jqGrid({
         url: 'items_grid.php', // URL para obtener los productos (cambia por la URL correcta)
         datatype: 'json',
@@ -366,6 +366,7 @@ function agregar(){
     $("#cboventipo").removeAttr("disabled").trigger("chosen:updated");
     $("#cboidclientes").removeAttr("disabled").trigger("chosen:updated");
     $("#cbomercaderias").removeAttr("disabled").trigger("chosen:updated");
+    $("#cboidtimbrado").removeAttr("disabled").trigger("chosen:updated");
     $("#txtcantidad").removeAttr("disabled");
     $("#btnGrabar").removeAttr("disabled");
     $("#btnCancelar").removeAttr("disabled");
@@ -416,31 +417,33 @@ $("#buscarClienteBtn").click(function() {
     });
 });
 function grabar(){
-    var salida = '{';
-        $("#grilladetalle tbody tr").each(function (index) {
 
 
-            salida = salida + '{';
-
-            $(this).children("td").each(function (index2) {
-
-                if (index2 < 6) {
-                    salida = salida + $(this).text().replace(/\./g,"").replace(/\"/g,"") + ",";
-                } else {
-                    salida = salida + $(this).text().replace(/\./g,"");
-                }
+    // var salida = '{';
+    //     $("#grilladetalle tbody tr").each(function (index) {
 
 
+    //         salida = salida + '{';
 
-            });
-            if (index < $("#grilladetalle tbody tr").length - 1) {
-                salida = salida + '},';
-            } else {
-                salida = salida + '}';
-            }
-        });
-        salida = salida + '}';
-        $('#txtdetalles').val(salida);
+    //         $(this).children("td").each(function (index2) {
+
+    //             if (index2 < 6) {
+    //                 salida = salida + $(this).text().replace(/\./g,"").replace(/\"/g,"") + ",";
+    //             } else {
+    //                 salida = salida + $(this).text().replace(/\./g,"");
+    //             }
+
+
+
+    //         });
+    //         if (index < $("#grilladetalle tbody tr").length - 1) {
+    //             salida = salida + '},';
+    //         } else {
+    //             salida = salida + '}';
+    //         }
+    //     });
+    //     salida = salida + '}';
+    //     $('#txtdetalles').val(salida);
         //alert(salida);
         $('#txtvenintervalo').removeAttr('disabled');
         $('#txtvencantcuotas').removeAttr('disabled');
@@ -449,23 +452,23 @@ function grabar(){
         
         
         
-        var sql = "select sp_ventas(" + $("#txtcodigo").val() + ",'" + $("#cboventipo").val() + "'," + $("#txtvenintervalo").val() + ", " + $("#txtvencantcuotas").val() + ", " + $("#cboidclientes").val() + ", " + $("#cboidfuncionario").val() + "," + $("#txtusuario").val() + "," + $("#txtidtimbrado").val() + "," + $("#txtidaper").val() + "," + $("#cboiddeposito").val() + ",'" + $("#txtdetalles").val() + "'," + $("#operacion").val() + ")";
-        //bootbox.alert(sql);
+        // var sql = "select sp_ventas(" + $("#txtcodigo").val() + ",'" + $("#cboventipo").val() + "'," + $("#txtvenintervalo").val() + ", " + $("#txtvencantcuotas").val() + ", " + $("#cboidclientes").val() + ", " + $("#cboidfuncionario").val() + "," + $("#txtusuario").val() + "," + $("#txtidtimbrado").val() + "," + $("#txtidaper").val() + "," + $("#cboiddeposito").val() + ",'" + $("#txtdetalles").val() + "'," + $("#operacion").val() + ")";
+        // //bootbox.alert(sql);
         
-        if($("#txtcodigo").val()==="0" && $("#operacion").val()==="2"){
-            bootbox.alert("SELECCIONE UN REGISTRO PARA ANULAR");
-        }else if(salida==="{}"){
-            bootbox.alert("DEBE AL MENOS AGREGAR UN DETALLE");
-        }else{
-            bootbox.confirm("¿DESEA GRABAR LA OPERACION?", function (evt) {
-            if (evt) {
-                $.post("../../clases/operaciones_bd.php", {sql: sql})
-                        .done(function (data) {
-                            bootbox.alert(data, function(){location.reload();});
-                        });
-            }
-        });
-        }
+        // if($("#txtcodigo").val()==="0" && $("#operacion").val()==="2"){
+        //     bootbox.alert("SELECCIONE UN REGISTRO PARA ANULAR");
+        // }else if(salida==="{}"){
+        //     bootbox.alert("DEBE AL MENOS AGREGAR UN DETALLE");
+        // }else{
+        //     bootbox.confirm("¿DESEA GRABAR LA OPERACION?", function (evt) {
+        //     if (evt) {
+        //         $.post("../../clases/operaciones_bd.php", {sql: sql})
+        //                 .done(function (data) {
+        //                     bootbox.alert(data, function(){location.reload();});
+        //                 });
+        //     }
+        // });
+        // }
         
 }
 
@@ -873,11 +876,74 @@ function clienteSelect() {
         }
     });
 }
-
+// Función para recargar el contenido del select y hacer una nueva consulta al backend
+function timbradoSelect() {
+    // Realizar una solicitud AJAX para obtener los nuevos datos del backend
+    $.ajax({
+        url: 'timbrado_select.php', // URL de tu script en el backend que maneja la consulta y devuelve los nuevos datos
+        type: 'GET', // O 'POST' dependiendo de cómo manejes las solicitudes en tu backend
+        dataType: 'json', // El tipo de datos que esperas recibir del backend
+        success: function(data) {
+            console.log(data);
+            // Limpiar el contenido actual del select
+            $('.timbradoCombo').empty();
+            
+            // Agregar las nuevas opciones al select basadas en los datos recibidos del backend
+            $.each(data, function(key, value) {
+                $('.timbradoCombo').append($('<option>').text(value.text).attr('value', value.value));
+            });
+            
+            // Actualizar Chosen después de modificar el contenido del select
+            $('.timbradoCombo').trigger('chosen:updated');
+        },
+        error: function(xhr, status, error) {
+            // Manejar errores de la solicitud AJAX, si es necesario
+            console.error('Error al cargar los datos del servidor:', error);
+        }
+    });
+}
 // Llamar a la función de recarga cuando sea necesario, por ejemplo, al hacer clic en un botón
 
+$('#agregarTimbradoBtn').click(function(event) {
+    event.preventDefault(); // Evi
+    var formData = $('#formCrearTimbrado').serialize();
+    
+    $.ajax({
+      url: 'crear_timbrado.php',
+      method: 'POST', // Método de envío
+      data: formData,
+      success: function(response) {
+        if(response > 0){
+            timbradoSelect();
+            var nuevoCliente = parseInt(response);
+            $("#cboidtimbrado").val(nuevoCliente).trigger("chosen:updated");
+         
+            var intervaloEsconderModal = setInterval(function() {
+                // Oculta el modal
+                $("#modalTimbrado").modal('hide');
+                
+                // Detiene el intervalo después de ocultar el modal
+                clearInterval(intervaloEsconderModal);
+            }, 2000);
+            bootbox.alert("El Timbrado fue Agregado Con existo!");
+            limpiarFormulario();
+        }else{
+            bootbox.alert(response);
+        }
+        
+      }
+    });
+   
+});
+$('#btnGrabar').click(function(event) {
+// Obtener los datos de todas las filas del jqGrid
+event.preventDefault(); // Ev
+var datosCompletos = $("#gridDetalleVenta").jqGrid('getRowData');
 
+// Mostrar los datos completos en la consola
+console.log("Datos completos de la tabla:", datosCompletos);
 
+})
 
 
 

@@ -70,7 +70,7 @@ if (!$resultim) {
             padding-bottom: 1px;
         }
 
-        #contentdetalle {}
+
 
         #bodyBuscador {
             /*                 bottom: 5%;
@@ -120,19 +120,34 @@ if (!$resultim) {
                         <div class="card-header">Cabecera</div>
                         <div class="card-body">
                             <div class="row m-1">
-                                <div class="col-sm-1"></div>
-                                <div class="col-sm-2">
-                                    <label for="txtnrofactura" class="control-label">Numero de Factura</label>
+                     
+                                <div class="col-sm-1">
+                                    <label for="txtnrofactura" class="control-label">Nro.Factura</label>
                                 </div>
+                                <div class="col-sm-1"></div>
                                 <div class="col-sm-2">
                                     <input type="text" class="form-control" id="txtnrofactura" value="<?php echo $resultaper[0]['siguiente_factura']; ?>" disabled>
                                 </div>
-                                <div class="col-sm-1">
+                                <!-- <div class="col-sm-1">
                                     <label for="txttimbrado" class="control-label">Timbrado</label>
                                 </div>
                                 <div class="col-sm-2">
                                     <input type="text" class="form-control" id="txttimbrado" value="<?php echo $resultim[0]['tim_numero']; ?>" disabled>
-                                </div>
+                                </div> -->
+           
+                                    <div class="col-sm-1">
+                                        <label for="cboidcliente" class="control-label">Timbrado</label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <select class="form-control chosen-select timbradoCombo" id="cboidtimbrado" disabled="">
+
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <small><a class="btn btn-sm btn-info" role="button" data-title="Agregar" data-bs-toggle="modal" data-bs-target="#modalTimbrado"><span class="glyphicon glyphicon glyphicon-plus"></span></a>
+                                        </small>
+                                    </div>
+                          
                                 <div class="col-sm-1">
                                     <label for="txtfecha" class="control-label">Fecha</label>
                                 </div>
@@ -141,7 +156,7 @@ if (!$resultim) {
                                 </div>
                             </div>
                             <div class="row m-1">
-                                <div class="col-sm-1"></div>
+                        
                                 <div class="col-sm-2">
                                     <label for="cboidfuncionario" class="control-label">Vendedor</label>
                                 </div>
@@ -173,7 +188,7 @@ if (!$resultim) {
                                 </div> -->
                             </div>
                             <div class="row m-1">
-                                <div class="col-sm-1"></div>
+                      
                                 <div class="col-sm-2">
                                     <label for="cboventipo" class="control-label">Tipo Factura</label>
                                 </div>
@@ -205,13 +220,13 @@ if (!$resultim) {
                             </div>
 
                             <div class="row m-1">
-                                <div class="col-sm-1"></div>
+                   
                                 <div class="col-sm-2">
                                     <label for="cboidcliente" class="control-label">Clientes</label>
                                 </div>
                                 <div class="col-sm-6">
                                     <select class="form-control chosen-select clienteCombo" id="cboidclientes" disabled="">
-                                      
+
                                     </select>
                                 </div>
                                 <div class="col-sm-1">
@@ -256,7 +271,11 @@ if (!$resultim) {
                                         <small><a class="btn btn-sm btn-info" role="button" data-title="Agregar" id="openModalBtn"><span class="glyphicon glyphicon glyphicon-plus"></span></a>
                                         </small>
                                     </div>
-
+                                    <div class="col-sm-1">
+                    <div class="col-md-1 text-right">
+                        <button  id="btnGrabar" class="btn btn-info" title="Grabar" disabled=""><span class="glyphicon glyphicon-floppy-disk"></span></button>
+                    </div>
+                </div>
 
                                 </div>
                             </div>
@@ -374,14 +393,14 @@ if (!$resultim) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body align-content-center">
-                  
+
                     <div class="card">
                         <div class="card-header">
                             Cliente
                         </div>
                         <div class="card-body">
                             <form id="formCrearCliente" method="post">
-                                
+
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="input-group mb-3">
@@ -389,7 +408,7 @@ if (!$resultim) {
                                             <button class="btn btn-outline-primary" type="button" id="buscarClienteBtn"><span class="glyphicon glyphicon-search"></span></button>
                                         </div>
                                     </div>
-                                   
+
                                 </div>
                                 <div id="resultadoCliente">
                                     <div class="row">
@@ -398,61 +417,61 @@ if (!$resultim) {
                                             <input type="text" class="form-control" name="ruc_numero" id="ruc_numero">
                                         </div>
                                         <div class="col-md-2">
-                                            <label for="inputState" class="form-label">DV</label>   
-                                            <input type="text" class="form-control" name="dv"  id="dv" >
+                                            <label for="inputState" class="form-label">DV</label>
+                                            <input type="text" class="form-control" name="dv" id="dv">
                                         </div>
                                         <div class="col-md-6">
                                             <label for="inputZip" class="form-label">Razon Social:</label>
-                                            <input type="text" class="form-control" name="razon_social"  id="razon_social">
+                                            <input type="text" class="form-control" name="razon_social" id="razon_social">
                                         </div>
                                     </div>
-                                    
+
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <label for="inputCity" class="form-label">Correo</label>
-                                        <input type="text" class="form-control" name="correo"  id="correo" >
+                                        <input type="text" class="form-control" name="correo" id="correo">
                                     </div>
                                     <div class="col-md-4">
-                                    <label for="inputCity" class="form-label">Ciudad</label>
+                                        <label for="inputCity" class="form-label">Ciudad</label>
                                         <select id="id_ciudad" name="id_ciudad" class="form-control chosen-select">
                                             <?php
                                             $sqlsuc = "select * from ciudades order by 1 desc";
                                             $result = consultas::get_datos($sqlsuc);
                                             foreach ($result as $rs) {
-                                            
+
                                             ?>
-                                            <option value="<?php echo $rs['id_ciudad'];?>">
-                                                <?php echo $rs['ciu_descripcion'];?>
-                                            </option>
+                                                <option value="<?php echo $rs['id_ciudad']; ?>">
+                                                    <?php echo $rs['ciu_descripcion']; ?>
+                                                </option>
                                             <?php
                                             }
                                             ?>
                                         </select>
                                     </div>
-                                  
-                                   
+
+
                                 </div>
                                 <div class="row">
-                                   <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <label for="inputCity" class="form-label">Direccion</label>
-                                        <input type="text" class="form-control" name="direccion"  id="direccion" >
+                                        <input type="text" class="form-control" name="direccion" id="direccion">
                                     </div>
                                     <div class="col-md-3">
-                                   
+
                                         <label for="inputCity" class="form-label">Telefono</label>
-                                        <input type="text" class="form-control" name="telefono" id="telefono" >
-                            
+                                        <input type="text" class="form-control" name="telefono" id="telefono">
+
                                     </div>
-                                   <div class="col-md-3" style="margin-top: 2rem!important;">
+                                    <div class="col-md-3" style="margin-top: 2rem!important;">
                                         <label for="clienteFisico">Física</label>
-                                        <input type="checkbox" id="clienteFisico" name="tipoCliente" value="1" >
-                                        
+                                        <input type="checkbox" id="clienteFisico" name="tipoCliente" value="1">
+
                                         <label for="clienteJuridico">Jurídica</label>
-                                        <input type="checkbox" id="clienteJuridico" name="tipoCliente" value="2" >
-                                   </div>
+                                        <input type="checkbox" id="clienteJuridico" name="tipoCliente" value="2">
+                                    </div>
                                 </div>
-                               
+
                             </form>
 
 
@@ -463,14 +482,65 @@ if (!$resultim) {
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="agregarClienteBtn" >Guardar</button>
+                    <button type="button" class="btn btn-success" id="agregarClienteBtn">Guardar</button>
                     <button type="button" class="btn btn-secondary" onclick="limpiarFormulario();" id="limpiarClienteBtn">Limpiar</button>
 
                 </div>
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modalTimbrado" tabindex="-1" aria-labelledby="modalTimbradoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTimbradoLabel">Nuevo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body align-content-center">
 
+                    <div class="card">
+                        <div class="card-header">
+                            Timbrado
+                        </div>
+                        <div class="card-body">
+                            <form id="formCrearTimbrado" method="post">
+
+                        
+                                <div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label for="inputCity" class="form-label">Nro.Timbrado</label>
+                                            <input type="text" class="form-control" name="timbrado_numero" id="timbrado_numero">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="inputState" class="form-label">Vigencia Desde</label>
+                                            <input type="date" class="form-control" name="timbrado_vigencia_desde" id="timbrado_vigencia_desde">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="inputZip" class="form-label">Vigencia Hasta</label>
+                                            <input type="date" class="form-control" name="timbrado_vigencia_hasta" id="timbrado_vigencia_hasta">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="agregarTimbradoBtn">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="limpiarFormulario();" id="limpiarClienteBtn">Limpiar</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <div id='panelBotones' style="text-align: right;">
@@ -526,24 +596,20 @@ if (!$resultim) {
     <script src="../../js/chosenselect.js"></script>
     <script src="../../src/bootbox/bootbox.all.js"></script>
     <script src="metodosjs.js"></script>
-  <style>
+    <style>
+        /* Estilo del checkbox personalizado cuando está marcado */
 
 
-/* Estilo del checkbox personalizado cuando está marcado */
+        /* Estilo del indicador (marcado) dentro del checkbox */
+        input[type="checkbox"] {
 
+            width: 25px;
+            /* Tamaño del indicador */
+            height: 25px;
+            /* Tamaño del indicador */
 
-/* Estilo del indicador (marcado) dentro del checkbox */
-input[type="checkbox"] {
-
-    width: 25px; /* Tamaño del indicador */
-    height: 25px; /* Tamaño del indicador */
-
-}
-
-
-
-
-  </style>
+        }
+    </style>
 </body>
 
 </html>
